@@ -1,27 +1,10 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import styled, { keyframes } from 'styled-components';
+import styled from 'styled-components';
+import { motion } from 'framer-motion';
 
-// Define keyframes for fade-in animation
-const fadeInUp = keyframes`
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-`;
-
-// Styled components
 const Section = styled.section`
   padding: 6rem 2rem;
-  background: linear-gradient(
-    180deg,
-    ${({ theme }) => theme.colors.background} 0%,
-    ${({ theme }) => theme.colors.cardBackground} 100%
-  );
+  background: linear-gradient(180deg, #ffffff 0%, #f8f9fa 100%);
 `;
 
 const Container = styled.div`
@@ -33,18 +16,15 @@ const Title = styled.h2`
   text-align: center;
   font-size: 2.5rem;
   margin-bottom: 1.5rem;
-  color: ${({ theme }) => theme.colors.textColor};
-  animation: ${fadeInUp} 0.6s ease-out;
+  color: #333;
 `;
 
 const Description = styled.p`
   text-align: center;
   max-width: 800px;
   margin: 0 auto 4rem;
-  color: ${({ theme }) => theme.colors.textColor};
-  opacity: 0.9;
+  color: #666;
   line-height: 1.6;
-  animation: ${fadeInUp} 0.6s ease-out 0.2s backwards;
 `;
 
 const ProcessSteps = styled.div`
@@ -52,6 +32,7 @@ const ProcessSteps = styled.div`
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 2rem;
   position: relative;
+
   &::before {
     content: '';
     position: absolute;
@@ -59,11 +40,7 @@ const ProcessSteps = styled.div`
     left: 0;
     right: 0;
     height: 2px;
-    background: linear-gradient(
-      90deg,
-      ${({ theme }) => theme.colors.primary},
-      ${({ theme }) => theme.colors.secondary}
-    );
+    background: linear-gradient(90deg, #2196F3, #1976D2);
     z-index: 0;
     opacity: 0.3;
     @media (max-width: 768px) {
@@ -72,23 +49,18 @@ const ProcessSteps = styled.div`
   }
 `;
 
-const ProcessStep = styled.div`
+const ProcessStep = styled(motion.div)`
   text-align: center;
   position: relative;
   z-index: 1;
-  animation: ${fadeInUp} 0.6s ease-out backwards;
-  animation-delay: ${({ index }) => `${0.4 + index * 0.2}s`};
+  padding: 1rem;
 `;
 
-const StepNumber = styled.div`
+const StepNumber = styled(motion.div)`
   width: 80px;
   height: 80px;
   border-radius: 50%;
-  background: linear-gradient(
-    135deg,
-    ${({ theme }) => theme.colors.primary},
-    ${({ theme }) => theme.colors.secondary}
-  );
+  background: linear-gradient(135deg, #2196F3, #1976D2);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -96,32 +68,27 @@ const StepNumber = styled.div`
   color: white;
   font-size: 2rem;
   font-weight: bold;
-  position: relative;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-  transition: transform 0.3s ease;
-  &:hover {
-    transform: scale(1.1);
-  }
-  i {
-    font-size: 2rem;
-  }
+`;
+
+const StepIcon = styled.i`
+  font-size: 2rem;
 `;
 
 const StepTitle = styled.h3`
-  color: ${({ theme }) => theme.colors.textColor};
+  color: #333;
   font-size: 1.5rem;
   margin-bottom: 1rem;
 `;
 
 const StepDescription = styled.p`
-  color: ${({ theme }) => theme.colors.textColor};
-  opacity: 0.8;
+  color: #666;
   line-height: 1.6;
   max-width: 300px;
   margin: 0 auto;
 `;
 
-const ProcessSection = ({ theme }) => {
+const ProcessSection = () => {
   const steps = [
     {
       icon: 'fas fa-comments',
@@ -146,30 +113,40 @@ const ProcessSection = ({ theme }) => {
   ];
 
   return (
-    <Section id="process" theme={theme}>
+    <Section>
       <Container>
-        <Title theme={theme}>Our Process</Title>
-        <Description theme={theme}>
-          We follow a systematic approach to deliver high-quality content that drives results.
-        </Description>
-        <ProcessSteps theme={theme}>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          <Title>Our Process</Title>
+          <Description>
+            We follow a systematic approach to deliver high-quality content that drives results.
+          </Description>
+        </motion.div>
+        <ProcessSteps>
           {steps.map((step, index) => (
-            <ProcessStep key={index} index={index}>
-              <StepNumber theme={theme}>
-                <i className={step.icon}></i>
+            <ProcessStep
+              key={index}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: index * 0.2 }}
+            >
+              <StepNumber
+                whileHover={{ scale: 1.1 }}
+                transition={{ duration: 0.3 }}
+              >
+                <StepIcon className={step.icon} />
               </StepNumber>
-              <StepTitle theme={theme}>{step.title}</StepTitle>
-              <StepDescription theme={theme}>{step.description}</StepDescription>
+              <StepTitle>{step.title}</StepTitle>
+              <StepDescription>{step.description}</StepDescription>
             </ProcessStep>
           ))}
         </ProcessSteps>
       </Container>
     </Section>
   );
-};
-
-ProcessSection.propTypes = {
-  theme: PropTypes.object.isRequired
 };
 
 export default ProcessSection;

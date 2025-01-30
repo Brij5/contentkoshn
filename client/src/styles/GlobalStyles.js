@@ -1,7 +1,7 @@
 import { createGlobalStyle } from 'styled-components';
 
 const GlobalStyles = createGlobalStyle`
-  * {
+  *, *::before, *::after {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -13,40 +13,40 @@ const GlobalStyles = createGlobalStyle`
   }
 
   body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-      'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-      sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background-color: #ffffff;
+    color: #333333;
+    line-height: 1.5;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background: ${({ theme }) => theme.colors.background};
-    color: ${({ theme }) => theme.colors.text};
-    line-height: 1.5;
-    min-height: 100vh;
   }
 
-  code {
-    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-      monospace;
+  h1, h2, h3, h4, h5, h6 {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    line-height: 1.2;
+    margin: 1em 0 0.5em;
+    color: #333333;
+  }
+
+  p {
+    margin-bottom: 1rem;
+    color: #666666;
   }
 
   a {
+    color: #2196F3;
     text-decoration: none;
-    color: inherit;
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: #1976D2;
+    }
   }
 
   button {
+    font: inherit;
+    color: inherit;
     cursor: pointer;
-    border: none;
-    background: none;
-    font-family: inherit;
-  }
-
-  input, textarea, select {
-    font-family: inherit;
-  }
-
-  ul, ol {
-    list-style: none;
   }
 
   img {
@@ -54,96 +54,65 @@ const GlobalStyles = createGlobalStyle`
     height: auto;
   }
 
-  /* Scrollbar Styles */
+  /* Custom scrollbar */
   ::-webkit-scrollbar {
     width: 8px;
-    height: 8px;
   }
 
   ::-webkit-scrollbar-track {
-    background: ${({ theme }) => theme.colors.backgroundSecondary};
+    background: #f1f1f1;
   }
 
   ::-webkit-scrollbar-thumb {
-    background: ${({ theme }) => theme.colors.primary}40;
+    background: #2196F3;
     border-radius: 4px;
   }
 
-  ::-webkit-scrollbar-thumb:hover {
-    background: ${({ theme }) => theme.colors.primary}60;
+  /* Selection */
+  ::selection {
+    background: #2196F3;
+    color: white;
   }
 
-  /* Toast Styles */
-  .Toastify__toast {
-    border-radius: 8px;
-    padding: 16px;
+  /* Form elements */
+  input, textarea, select {
     font-family: inherit;
+    font-size: 1rem;
+    padding: 0.75rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    background-color: white;
+    color: #333333;
+    transition: border-color 0.2s ease;
+
+    &:focus {
+      outline: none;
+      border-color: #2196F3;
+    }
   }
 
-  .Toastify__toast-body {
-    font-size: 0.875rem;
+  /* Container */
+  .container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
   }
 
-  /* Modal Styles */
-  .modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
+  /* Utility classes */
+  .text-center {
+    text-align: center;
   }
 
-  .modal-content {
-    background: ${({ theme }) => theme.colors.background};
-    padding: 2rem;
-    border-radius: 8px;
-    max-width: 90%;
-    max-height: 90vh;
-    overflow-y: auto;
-    position: relative;
-  }
+  .mt-1 { margin-top: 0.5rem; }
+  .mt-2 { margin-top: 1rem; }
+  .mt-3 { margin-top: 1.5rem; }
+  .mt-4 { margin-top: 2rem; }
 
-  /* Animation Classes */
-  .fade-enter {
-    opacity: 0;
-  }
-
-  .fade-enter-active {
-    opacity: 1;
-    transition: opacity 200ms ease-in;
-  }
-
-  .fade-exit {
-    opacity: 1;
-  }
-
-  .fade-exit-active {
-    opacity: 0;
-    transition: opacity 200ms ease-in;
-  }
-
-  .slide-up-enter {
-    transform: translateY(100%);
-  }
-
-  .slide-up-enter-active {
-    transform: translateY(0);
-    transition: transform 300ms ease-out;
-  }
-
-  .slide-up-exit {
-    transform: translateY(0);
-  }
-
-  .slide-up-exit-active {
-    transform: translateY(100%);
-    transition: transform 300ms ease-out;
-  }
+  .mb-1 { margin-bottom: 0.5rem; }
+  .mb-2 { margin-bottom: 1rem; }
+  .mb-3 { margin-bottom: 1.5rem; }
+  .mb-4 { margin-bottom: 2rem; }
 `;
 
 export default GlobalStyles;

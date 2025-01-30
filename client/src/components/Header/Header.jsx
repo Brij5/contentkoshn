@@ -1,23 +1,22 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { toggleTheme } from '../../store/slices/themeSlice';
-import { FiSun, FiMoon, FiMenu } from 'react-icons/fi';
+import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { useTheme } from '../../contexts/ThemeContext';
+import { useSelector, useDispatch } from 'react-redux';
+import { logout } from '../../store/slices/authSlice';
 
 const HeaderContainer = styled.header`
-  padding: ${({ theme }) => theme.spacing.md};
-  background: ${({ theme }) => theme.colors.background};
-  box-shadow: ${({ theme }) => theme.shadows.sm};
+  background-color: #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 1rem 0;
   position: sticky;
   top: 0;
-  z-index: ${({ theme }) => theme.zIndex.header};
+  z-index: 1000;
 `;
 
 const Nav = styled.nav`
-  max-width: ${({ theme }) => theme.breakpoints.xl};
+  max-width: 1440px;
   margin: 0 auto;
+  padding: 0 1rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -26,77 +25,103 @@ const Nav = styled.nav`
 const Logo = styled(Link)`
   font-size: 1.5rem;
   font-weight: bold;
-  color: ${({ theme }) => theme.colors.primary};
+  color: #333;
+  text-decoration: none;
 `;
 
 const NavLinks = styled.div`
   display: flex;
-  gap: ${({ theme }) => theme.spacing.md};
+  gap: 2rem;
   align-items: center;
-  @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
-    display: none;
-  }
 `;
 
 const NavLink = styled(Link)`
-  color: ${({ theme, active }) => active ? theme.colors.primary : theme.colors.text};
-  padding: ${({ theme }) => `${theme.spacing.xs} ${theme.spacing.sm}`};
-  border-radius: 4px;
-  transition: all ${({ theme }) => theme.transitions.fast};
+  color: #333;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s;
+
   &:hover {
-    background: ${({ theme }) => theme.colors.backgroundSecondary};
+    color: #007bff;
   }
 `;
 
-const ThemeToggle = styled.button`
-  padding: ${({ theme }) => theme.spacing.sm};
-  border-radius: 50%;
+const AuthButtons = styled.div`
   display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all ${({ theme }) => theme.transitions.fast};
-  &:hover {
-    background: ${({ theme }) => theme.colors.backgroundSecondary};
-  }
+  gap: 1rem;
 `;
 
-const MobileMenuButton = styled.button`
-  display: none;
-  padding: ${({ theme }) => theme.spacing.sm};
+const Button = styled.button`
+  padding: 0.5rem 1rem;
   border-radius: 4px;
-  @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &.primary {
+    background-color: #007bff;
+    color: white;
+    border: none;
+
+    &:hover {
+      background-color: #0056b3;
+    }
   }
-  &:hover {
-    background: ${({ theme }) => theme.colors.backgroundSecondary};
+
+  &.secondary {
+    background-color: transparent;
+    color: #007bff;
+    border: 1px solid #007bff;
+
+    &:hover {
+      background-color: #007bff;
+      color: white;
+    }
   }
 `;
 
 const Header = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
-  const location = useLocation();
-  const { isDarkMode, toggleTheme } = useTheme();
+  const { isAuthenticated, user } = useSelector((state) => state.auth);
 
-  const isActive = (path) => location.pathname === path;
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate('/');
+  };
 
   return (
     <HeaderContainer>
       <Nav>
         <Logo to="/">ContentKosh</Logo>
         <NavLinks>
-          <NavLink to="/" active={isActive('/')}>Home</NavLink>
-          <NavLink to="/about" active={isActive('/about')}>About</NavLink>
-          <NavLink to="/services" active={isActive('/services')}>Services</NavLink>
-          <NavLink to="/contact" active={isActive('/contact')}>Contact</NavLink>
-          <ThemeToggle onClick={() => toggleTheme()}>
-            {isDarkMode ? <FiSun size={20} /> : <FiMoon size={20} />}
-          </ThemeToggle>
+          <NavLink to="/">Home</NavLink>
+          <NavLink to="/services">Services</NavLink>
+          <NavLink to="/about">About</NavLink>
+          <NavLink to="/contact">Contact</NavLink>
+          {isAuthenticated && user?.role === 'admin' && (
+            <NavLink to="/admin/dashboard">Dashboard</NavLink>
+          )}
         </NavLinks>
-        <MobileMenuButton>
-          <FiMenu size={24} />
-        </MobileMenuButton>
+        <AuthButtons>
+          {isAuthenticated ? (
+            <>
+              <NavLink to="/profile">Profile</NavLink>
+              <Button className="secondary" onClick={handleLogout}>
+                Logout
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button className="secondary" onClick={() => navigate('/auth/login')}>
+                Login
+              </Button>
+              <Button className="primary" onClick={() => navigate('/auth/register')}>
+                Sign Up
+              </Button>
+            </>
+          )}
+        </AuthButtons>
       </Nav>
     </HeaderContainer>
   );

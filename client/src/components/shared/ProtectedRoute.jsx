@@ -10,18 +10,18 @@ const LoadingContainer = styled.div`
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: ${({ theme }) => theme.backgroundPrimary};
+  background: #ffffff;
 `;
 
 const LoadingSpinner = styled(motion.div)`
   width: 50px;
   height: 50px;
-  border: 5px solid ${({ theme }) => theme.borderColor};
-  border-top-color: ${({ theme }) => theme.primaryColor};
+  border: 5px solid #f3f3f3;
+  border-top-color: #2196F3;
   border-radius: 50%;
 `;
 
-const ProtectedRoute = ({ children }) => {
+const ProtectedRoute = ({ children, requireAdmin }) => {
   const location = useLocation();
   const { isAuthenticated, loading, user } = useSelector((state) => state.auth);
 
@@ -44,7 +44,7 @@ const ProtectedRoute = ({ children }) => {
     return <Navigate to="/auth/verify-email" state={{ from: location }} replace />;
   }
 
-  if (location.pathname.startsWith('/admin') && user?.role !== 'admin') {
+  if (requireAdmin && user?.role !== 'admin') {
     return <Navigate to="/unauthorized" replace />;
   }
 
@@ -52,7 +52,12 @@ const ProtectedRoute = ({ children }) => {
 };
 
 ProtectedRoute.propTypes = {
-  children: PropTypes.node.isRequired
+  children: PropTypes.node.isRequired,
+  requireAdmin: PropTypes.bool
+};
+
+ProtectedRoute.defaultProps = {
+  requireAdmin: false
 };
 
 export default ProtectedRoute; 

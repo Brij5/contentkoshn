@@ -1,30 +1,38 @@
-import React, { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { login } from '../../store/slices/authSlice';
+import { authAPI } from '../../services/api';
 import styled from 'styled-components';
-import { loginUser, clearAuthError } from '../../store/actions/authActions';
-import { selectAuthLoading, selectAuthError, selectIsAuthenticated } from '../../store/slices/authSlice';
+import { toast } from 'react-toastify';
 
 const Container = styled.div`
-  max-width: 400px;
-  margin: 2rem auto;
+  min-height: calc(100vh - 80px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   padding: 2rem;
-  background: ${({ theme }) => theme.backgroundSecondary};
+`;
+
+const FormCard = styled.div`
+  background: white;
+  padding: 2rem;
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
 `;
 
 const Title = styled.h1`
   text-align: center;
-  color: ${({ theme }) => theme.textColor};
+  color: #333;
   margin-bottom: 2rem;
-  font-size: 2rem;
 `;
 
 const Form = styled.form`
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1rem;
 `;
 
 const FormGroup = styled.div`
@@ -34,188 +42,128 @@ const FormGroup = styled.div`
 `;
 
 const Label = styled.label`
-  color: ${({ theme }) => theme.textColor};
   font-weight: 500;
+  color: #333;
 `;
 
 const Input = styled.input`
-  padding: 0.8rem;
-  border: 2px solid ${({ theme, error }) => error ? theme.errorColor : theme.borderColor};
+  padding: 0.75rem;
+  border: 1px solid #ddd;
   border-radius: 4px;
-  background: ${({ theme }) => theme.inputBackground};
-  color: ${({ theme }) => theme.textColor};
   font-size: 1rem;
-  transition: border-color 0.3s ease;
 
   &:focus {
     outline: none;
-    border-color: ${({ theme }) => theme.primaryColor};
+    border-color: #007bff;
   }
 `;
 
 const Button = styled.button`
-  background: ${({ theme }) => theme.primaryColor};
+  padding: 0.75rem;
+  background-color: #007bff;
   color: white;
-  padding: 1rem;
   border: none;
   border-radius: 4px;
   font-size: 1rem;
   font-weight: 500;
   cursor: pointer;
-  transition: opacity 0.3s ease;
-
-  &:disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
-  }
-
-  &:hover:not(:disabled) {
-    opacity: 0.9;
-  }
-`;
-
-const ErrorText = styled.span`
-  color: ${({ theme }) => theme.errorColor};
-  font-size: 0.9rem;
-`;
-
-const LinkText = styled(Link)`
-  color: ${({ theme }) => theme.primaryColor};
-  text-decoration: none;
-  text-align: center;
-  font-size: 0.9rem;
+  transition: background-color 0.2s;
 
   &:hover {
-    text-decoration: underline;
+    background-color: #0056b3;
+  }
+
+  &:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+`;
+
+const LinkText = styled.p`
+  text-align: center;
+  margin-top: 1rem;
+
+  a {
+    color: #007bff;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
   }
 `;
 
 const Login = () => {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const isLoading = useSelector(selectAuthLoading);
-  const error = useSelector(selectAuthError);
-  const isAuthenticated = useSelector(selectIsAuthenticated);
-
   const [formData, setFormData] = useState({
     email: '',
     password: '',
   });
-  const [formErrors, setFormErrors] = useState({});
+  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    // Clear any existing auth errors when component mounts
-    dispatch(clearAuthError());
-  }, [dispatch]);
-
-  useEffect(() => {
-    // Redirect if already authenticated
-    if (isAuthenticated) {
-      navigate('/dashboard');
-    }
-  }, [isAuthenticated, navigate]);
-
-  const validateForm = () => {
-    const errors = {};
-    if (!formData.email) {
-      errors.email = 'Email is required';
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      errors.email = 'Invalid email address';
-    }
-    if (!formData.password) {
-      errors.password = 'Password is required';
-    }
-    setFormErrors(errors);
-    return Object.keys(errors).length === 0;
-  };
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-    // Clear field error when user starts typing
-    if (formErrors[name]) {
-      setFormErrors(prev => ({
-        ...prev,
-        [name]: ''
-      }));
-    }
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (validateForm()) {
-      const success = await dispatch(loginUser(formData));
-      if (success) {
-        navigate('/dashboard');
-      }
+    setLoading(true);
+
+    try {
+      const response = await authAPI.login(formData);
+      dispatch(login(response.data));
+      toast.success('Login successful!');
+      navigate('/');
+    } catch (error) {
+      toast.error(error.response?.data?.error || 'Login failed');
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <Container>
-      <Title>Welcome Back</Title>
-      <Form onSubmit={handleSubmit}>
-        <FormGroup>
-          <Label htmlFor="email">Email</Label>
-          <Input
-            type="email"
-            id="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            error={formErrors.email}
-            disabled={isLoading}
-            aria-invalid={!!formErrors.email}
-            aria-describedby={formErrors.email ? 'email-error' : undefined}
-          />
-          {formErrors.email && (
-            <ErrorText id="email-error" role="alert">
-              {formErrors.email}
-            </ErrorText>
-          )}
-        </FormGroup>
-
-        <FormGroup>
-          <Label htmlFor="password">Password</Label>
-          <Input
-            type="password"
-            id="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            error={formErrors.password}
-            disabled={isLoading}
-            aria-invalid={!!formErrors.password}
-            aria-describedby={formErrors.password ? 'password-error' : undefined}
-          />
-          {formErrors.password && (
-            <ErrorText id="password-error" role="alert">
-              {formErrors.password}
-            </ErrorText>
-          )}
-        </FormGroup>
-
-        {error && (
-          <ErrorText role="alert">
-            {error}
-          </ErrorText>
-        )}
-
-        <Button type="submit" disabled={isLoading}>
-          {isLoading ? 'Logging in...' : 'Login'}
-        </Button>
-
-        <LinkText to="/forgot-password">
-          Forgot your password?
+      <FormCard>
+        <Title>Login</Title>
+        <Form onSubmit={handleSubmit}>
+          <FormGroup>
+            <Label htmlFor="email">Email</Label>
+            <Input
+              type="email"
+              id="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+            />
+          </FormGroup>
+          <FormGroup>
+            <Label htmlFor="password">Password</Label>
+            <Input
+              type="password"
+              id="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+            />
+          </FormGroup>
+          <Button type="submit" disabled={loading}>
+            {loading ? 'Logging in...' : 'Login'}
+          </Button>
+        </Form>
+        <LinkText>
+          Don't have an account? <Link to="/auth/register">Sign up</Link>
         </LinkText>
-
-        <LinkText to="/register">
-          Don't have an account? Sign up
+        <LinkText>
+          <Link to="/auth/forgot-password">Forgot password?</Link>
         </LinkText>
-      </Form>
+      </FormCard>
     </Container>
   );
 };

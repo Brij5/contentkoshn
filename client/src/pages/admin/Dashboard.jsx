@@ -1,16 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
-import { 
-  FiUsers, 
-  FiFileText, 
-  FiPackage, 
-  FiBarChart2,
+import {
+  FiUsers,
+  FiFileText,
+  FiActivity,
   FiTrendingUp,
-  FiTrendingDown
+  FiClock
 } from 'react-icons/fi';
 
-const DashboardContainer = styled.div`
+const Container = styled.div`
   display: flex;
   flex-direction: column;
   gap: 2rem;
@@ -24,8 +23,9 @@ const Header = styled.div`
 `;
 
 const Title = styled.h1`
+  color: ${({ theme }) => theme.textColor};
   font-size: 2rem;
-  color: ${({ theme }) => theme.colors.text};
+  font-weight: 700;
 `;
 
 const StatsGrid = styled.div`
@@ -35,101 +35,106 @@ const StatsGrid = styled.div`
 `;
 
 const StatCard = styled(motion.div)`
-  background: ${({ theme }) => theme.colors.card};
+  background: ${({ theme }) => theme.cardBackground};
   padding: 1.5rem;
   border-radius: 12px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-`;
-
-const StatHeader = styled.div`
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin-bottom: 1rem;
+  gap: 1rem;
 `;
 
-const StatTitle = styled.h3`
-  font-size: 0.875rem;
-  color: ${({ theme }) => theme.colors.textSecondary};
-  margin: 0;
-`;
-
-const StatIcon = styled.div`
-  width: 40px;
-  height: 40px;
-  border-radius: 8px;
-  background: ${({ theme, $color }) => theme.colors[$color]}20;
-  color: ${({ theme, $color }) => theme.colors[$color]};
+const IconWrapper = styled.div`
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 1.5rem;
+  background: ${({ theme, color }) => color}15;
+  color: ${({ color }) => color};
+`;
+
+const StatInfo = styled.div`
+  flex: 1;
 `;
 
 const StatValue = styled.div`
   font-size: 1.5rem;
-  font-weight: 600;
-  color: ${({ theme }) => theme.colors.text};
-  margin-bottom: 0.5rem;
+  font-weight: 700;
+  color: ${({ theme }) => theme.textColor};
+  margin-bottom: 0.25rem;
 `;
 
-const StatChange = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+const StatLabel = styled.div`
+  color: ${({ theme }) => theme.textColorLight};
   font-size: 0.875rem;
-  color: ${({ theme, $positive }) => 
-    $positive ? theme.colors.success : theme.colors.error};
 `;
 
-const RecentActivity = styled.div`
-  background: ${({ theme }) => theme.colors.card};
-  padding: 1.5rem;
-  border-radius: 12px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+const Section = styled.section`
+  margin-top: 2rem;
 `;
 
-const ActivityHeader = styled.div`
+const SectionHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 `;
 
-const ActivityTitle = styled.h2`
+const SectionTitle = styled.h2`
+  color: ${({ theme }) => theme.textColor};
   font-size: 1.25rem;
-  color: ${({ theme }) => theme.colors.text};
+  font-weight: 600;
 `;
 
 const ActivityList = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+  background: ${({ theme }) => theme.cardBackground};
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
 `;
 
 const ActivityItem = styled.div`
   display: flex;
   align-items: center;
   gap: 1rem;
-  padding: 1rem;
-  background: ${({ theme }) => theme.colors.background};
-  border-radius: 8px;
-  transition: all 0.2s ease;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid ${({ theme }) => theme.borderColor};
 
-  &:hover {
-    transform: translateX(4px);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  &:last-child {
+    border-bottom: none;
   }
 `;
 
 const ActivityIcon = styled.div`
   width: 32px;
   height: 32px;
-  border-radius: 6px;
-  background: ${({ theme, $color }) => theme.colors[$color]}20;
-  color: ${({ theme, $color }) => theme.colors[$color]};
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
+  background: ${({ theme, type }) => {
+    switch (type) {
+      case 'user':
+        return theme.primaryColor + '15';
+      case 'content':
+        return theme.successColor + '15';
+      default:
+        return theme.textColorLight + '15';
+    }
+  }};
+  color: ${({ theme, type }) => {
+    switch (type) {
+      case 'user':
+        return theme.primaryColor;
+      case 'content':
+        return theme.successColor;
+      default:
+        return theme.textColorLight;
+    }
+  }};
 `;
 
 const ActivityContent = styled.div`
@@ -137,147 +142,121 @@ const ActivityContent = styled.div`
 `;
 
 const ActivityText = styled.div`
+  color: ${({ theme }) => theme.textColor};
   font-size: 0.875rem;
-  color: ${({ theme }) => theme.colors.text};
   margin-bottom: 0.25rem;
+
+  strong {
+    font-weight: 600;
+  }
 `;
 
 const ActivityTime = styled.div`
+  color: ${({ theme }) => theme.textColorLight};
   font-size: 0.75rem;
-  color: ${({ theme }) => theme.colors.textSecondary};
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
 `;
 
-const AdminDashboard = () => {
-  const [stats, setStats] = useState({
-    users: { total: 0, change: 0 },
-    content: { total: 0, change: 0 },
-    services: { total: 0, change: 0 },
-    revenue: { total: 0, change: 0 }
-  });
-
-  const [activities, setActivities] = useState([]);
-
-  useEffect(() => {
-    // Simulated data - replace with actual API calls
-    setStats({
-      users: { total: 1234, change: 12.5 },
-      content: { total: 456, change: -5.2 },
-      services: { total: 89, change: 8.7 },
-      revenue: { total: 45600, change: 15.3 }
-    });
-
-    setActivities([
-      {
-        id: 1,
-        type: 'user',
-        text: 'New user registered: John Doe',
-        time: '5 minutes ago',
-        icon: <FiUsers />,
-        color: 'primary'
-      },
-      {
-        id: 2,
-        type: 'content',
-        text: 'New blog post published: "Getting Started with React"',
-        time: '15 minutes ago',
-        icon: <FiFileText />,
-        color: 'info'
-      },
-      {
-        id: 3,
-        type: 'service',
-        text: 'Service updated: Content Writing',
-        time: '1 hour ago',
-        icon: <FiPackage />,
-        color: 'success'
-      }
-    ]);
-  }, []);
-
-  const statCards = [
+const Dashboard = () => {
+  const stats = [
     {
-      title: 'Total Users',
-      value: stats.users.total,
-      change: stats.users.change,
-      icon: <FiUsers size={20} />,
-      color: 'primary'
+      icon: <FiUsers />,
+      value: '1,234',
+      label: 'Total Users',
+      color: '#4CAF50'
     },
     {
-      title: 'Content Items',
-      value: stats.content.total,
-      change: stats.content.change,
-      icon: <FiFileText size={20} />,
-      color: 'info'
+      icon: <FiFileText />,
+      value: '567',
+      label: 'Total Content',
+      color: '#2196F3'
     },
     {
-      title: 'Active Services',
-      value: stats.services.total,
-      change: stats.services.change,
-      icon: <FiPackage size={20} />,
-      color: 'success'
+      icon: <FiActivity />,
+      value: '89%',
+      label: 'Engagement Rate',
+      color: '#9C27B0'
     },
     {
-      title: 'Monthly Revenue',
-      value: `$${stats.revenue.total}`,
-      change: stats.revenue.change,
-      icon: <FiBarChart2 size={20} />,
-      color: 'warning'
+      icon: <FiTrendingUp />,
+      value: '+12.5%',
+      label: 'Growth Rate',
+      color: '#F44336'
+    }
+  ];
+
+  const recentActivity = [
+    {
+      type: 'user',
+      icon: <FiUsers />,
+      text: <><strong>John Doe</strong> created a new account</>,
+      time: '5 minutes ago'
+    },
+    {
+      type: 'content',
+      icon: <FiFileText />,
+      text: <><strong>Sarah Smith</strong> published a new article</>,
+      time: '15 minutes ago'
+    },
+    {
+      type: 'user',
+      icon: <FiUsers />,
+      text: <><strong>Mike Johnson</strong> updated their profile</>,
+      time: '1 hour ago'
     }
   ];
 
   return (
-    <DashboardContainer>
+    <Container>
       <Header>
         <Title>Dashboard</Title>
       </Header>
 
       <StatsGrid>
-        {statCards.map((stat, index) => (
+        {stats.map((stat, index) => (
           <StatCard
-            key={stat.title}
+            key={index}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.1 }}
           >
-            <StatHeader>
-              <StatTitle>{stat.title}</StatTitle>
-              <StatIcon $color={stat.color}>{stat.icon}</StatIcon>
-            </StatHeader>
-            <StatValue>{stat.value}</StatValue>
-            <StatChange $positive={stat.change > 0}>
-              {stat.change > 0 ? <FiTrendingUp /> : <FiTrendingDown />}
-              {Math.abs(stat.change)}% from last month
-            </StatChange>
+            <IconWrapper color={stat.color}>
+              {stat.icon}
+            </IconWrapper>
+            <StatInfo>
+              <StatValue>{stat.value}</StatValue>
+              <StatLabel>{stat.label}</StatLabel>
+            </StatInfo>
           </StatCard>
         ))}
       </StatsGrid>
 
-      <RecentActivity>
-        <ActivityHeader>
-          <ActivityTitle>Recent Activity</ActivityTitle>
-        </ActivityHeader>
+      <Section>
+        <SectionHeader>
+          <SectionTitle>Recent Activity</SectionTitle>
+        </SectionHeader>
+
         <ActivityList>
-          {activities.map((activity, index) => (
-            <ActivityItem
-              key={activity.id}
-              as={motion.div}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: index * 0.1 }}
-            >
-              <ActivityIcon $color={activity.color}>
+          {recentActivity.map((activity, index) => (
+            <ActivityItem key={index}>
+              <ActivityIcon type={activity.type}>
                 {activity.icon}
               </ActivityIcon>
               <ActivityContent>
                 <ActivityText>{activity.text}</ActivityText>
-                <ActivityTime>{activity.time}</ActivityTime>
+                <ActivityTime>
+                  <FiClock size={12} />
+                  {activity.time}
+                </ActivityTime>
               </ActivityContent>
             </ActivityItem>
           ))}
         </ActivityList>
-      </RecentActivity>
-    </DashboardContainer>
+      </Section>
+    </Container>
   );
 };
 
-export default AdminDashboard; 
+export default Dashboard; 

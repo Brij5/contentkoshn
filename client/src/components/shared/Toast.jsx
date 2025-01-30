@@ -1,92 +1,47 @@
-import React, { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import styled, { keyframes } from 'styled-components';
-import { selectToasts } from '../../store/slices/uiSlice';
-import { removeToast } from '../../store/slices/uiSlice';
-import { 
-  FiCheckCircle, 
-  FiAlertCircle, 
-  FiInfo, 
-  FiAlertTriangle,
-  FiX
-} from 'react-icons/fi';
+import React from 'react';
+import PropTypes from 'prop-types';
+import styled from 'styled-components';
+import { motion } from 'framer-motion';
+import { FiCheckCircle, FiAlertCircle, FiInfo, FiAlertTriangle, FiX } from 'react-icons/fi';
 
-const slideIn = keyframes`
-  from {
-    transform: translateX(100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
-`;
-
-const slideOut = keyframes`
-  from {
-    transform: translateX(0);
-    opacity: 1;
-  }
-  to {
-    transform: translateX(100%);
-    opacity: 0;
-  }
-`;
-
-const ToastContainer = styled.div`
-  position: fixed;
-  top: 1rem;
-  right: 1rem;
-  z-index: 9999;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  max-width: 400px;
-  
-  @media (max-width: 768px) {
-    left: 1rem;
-    right: 1rem;
-  }
-`;
-
-const ToastItem = styled.div`
+const ToastContainer = styled(motion.div)`
   display: flex;
   align-items: flex-start;
   gap: 0.75rem;
   padding: 1rem;
-  background: ${({ theme, $type }) => {
-    switch ($type) {
+  background: ${({ theme, variant }) => {
+    switch (variant) {
       case 'success':
-        return theme.successBackground;
+        return theme.successColor + '10';
       case 'error':
-        return theme.errorBackground;
+        return theme.errorColor + '10';
       case 'warning':
-        return theme.warningBackground;
+        return theme.warningColor + '10';
       case 'info':
+        return theme.infoColor + '10';
       default:
-        return theme.infoBackground;
+        return theme.cardBackground;
     }
   }};
-  color: ${({ theme, $type }) => {
-    switch ($type) {
+  border: 1px solid ${({ theme, variant }) => {
+    switch (variant) {
       case 'success':
-        return theme.successColor;
+        return theme.successColor + '30';
       case 'error':
-        return theme.errorColor;
+        return theme.errorColor + '30';
       case 'warning':
-        return theme.warningColor;
+        return theme.warningColor + '30';
       case 'info':
+        return theme.infoColor + '30';
       default:
-        return theme.infoColor;
+        return theme.borderColor;
     }
   }};
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  animation: ${slideIn} 0.3s ease forwards;
-  
-  &.removing {
-    animation: ${slideOut} 0.3s ease forwards;
-  }
+  min-width: 300px;
+  max-width: 500px;
+  pointer-events: auto;
 `;
 
 const IconWrapper = styled.div`
@@ -94,107 +49,140 @@ const IconWrapper = styled.div`
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  font-size: 1.25rem;
+  color: ${({ theme, variant }) => {
+    switch (variant) {
+      case 'success':
+        return theme.successColor;
+      case 'error':
+        return theme.errorColor;
+      case 'warning':
+        return theme.warningColor;
+      case 'info':
+        return theme.infoColor;
+      default:
+        return theme.textColor;
+    }
+  }};
+
+  svg {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
 `;
 
 const Content = styled.div`
   flex: 1;
 `;
 
-const Title = styled.div`
+const Title = styled.h4`
+  margin: 0;
+  color: ${({ theme }) => theme.textColor};
+  font-size: 0.875rem;
   font-weight: 600;
-  margin-bottom: 0.25rem;
+  line-height: 1.4;
 `;
 
-const Message = styled.div`
+const Message = styled.p`
+  margin: 0.25rem 0 0;
+  color: ${({ theme }) => theme.textColorLight};
   font-size: 0.875rem;
-  opacity: 0.9;
+  line-height: 1.4;
 `;
 
 const CloseButton = styled.button`
   background: none;
   border: none;
-  color: inherit;
+  padding: 0;
+  color: ${({ theme }) => theme.textColorLight};
   cursor: pointer;
-  padding: 0.25rem;
-  opacity: 0.7;
-  transition: opacity 0.2s ease;
-  
+  transition: color 0.2s ease;
+
   &:hover {
-    opacity: 1;
+    color: ${({ theme }) => theme.textColor};
+  }
+
+  svg {
+    width: 1.25rem;
+    height: 1.25rem;
   }
 `;
 
-const ProgressBar = styled.div`
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  height: 3px;
-  background: currentColor;
-  opacity: 0.3;
-  width: ${({ $progress }) => $progress}%;
-  transition: width 0.1s linear;
-`;
-
-const Toast = () => {
-  const dispatch = useDispatch();
-  const toasts = useSelector(selectToasts);
-
-  useEffect(() => {
-    toasts.forEach(toast => {
-      if (toast.duration !== 0) {
-        const timer = setTimeout(() => {
-          dispatch(removeToast(toast.id));
-        }, toast.duration);
-
-        return () => clearTimeout(timer);
-      }
-    });
-  }, [toasts, dispatch]);
-
-  const getIcon = (type) => {
-    switch (type) {
-      case 'success':
-        return <FiCheckCircle />;
-      case 'error':
-        return <FiAlertCircle />;
-      case 'warning':
-        return <FiAlertTriangle />;
-      case 'info':
-      default:
-        return <FiInfo />;
+const toastVariants = {
+  initial: {
+    opacity: 0,
+    y: 50,
+    scale: 0.3,
+  },
+  animate: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+  },
+  exit: {
+    opacity: 0,
+    scale: 0.5,
+    transition: {
+      duration: 0.2
     }
-  };
+  }
+};
 
+const getIcon = (variant) => {
+  switch (variant) {
+    case 'success':
+      return <FiCheckCircle />;
+    case 'error':
+      return <FiAlertCircle />;
+    case 'warning':
+      return <FiAlertTriangle />;
+    case 'info':
+      return <FiInfo />;
+    default:
+      return null;
+  }
+};
+
+const Toast = ({
+  variant = 'default',
+  title,
+  message,
+  onClose,
+  className
+}) => {
   return (
-    <ToastContainer>
-      {toasts.map(toast => {
-        const progress = toast.duration === 0 ? 100 : 
-          ((toast.duration - (Date.now() - toast.id)) / toast.duration) * 100;
-
-        return (
-          <ToastItem key={toast.id} $type={toast.type}>
-            <IconWrapper>
-              {getIcon(toast.type)}
-            </IconWrapper>
-            <Content>
-              {toast.title && <Title>{toast.title}</Title>}
-              <Message>{toast.message}</Message>
-            </Content>
-            <CloseButton 
-              onClick={() => dispatch(removeToast(toast.id))}
-              aria-label="Close notification"
-            >
-              <FiX />
-            </CloseButton>
-            {toast.duration > 0 && (
-              <ProgressBar $progress={Math.max(0, progress)} />
-            )}
-          </ToastItem>
-        );
-      })}
+    <ToastContainer
+      variant={variant}
+      className={className}
+      variants={toastVariants}
+      initial="initial"
+      animate="animate"
+      exit="exit"
+    >
+      <IconWrapper variant={variant}>
+        {getIcon(variant)}
+      </IconWrapper>
+      <Content>
+        {title && <Title>{title}</Title>}
+        {message && <Message>{message}</Message>}
+      </Content>
+      {onClose && (
+        <CloseButton
+          onClick={onClose}
+          aria-label="Close toast"
+        >
+          <FiX />
+        </CloseButton>
+      )}
     </ToastContainer>
   );
+};
+
+Toast.propTypes = {
+  variant: PropTypes.oneOf(['default', 'success', 'error', 'warning', 'info']),
+  title: PropTypes.string,
+  message: PropTypes.string,
+  onClose: PropTypes.func,
+  className: PropTypes.string
 };
 
 export default Toast; 

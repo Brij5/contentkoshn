@@ -33,17 +33,10 @@ app.use(helmet({
   contentSecurityPolicy: false,
   crossOriginEmbedderPolicy: false
 }));
-
-// CORS configuration
-const corsOptions = {
+app.use(cors({
   origin: process.env.CLIENT_URL || 'http://localhost:3000',
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-};
-app.use(cors(corsOptions));
-
-// Security middleware
+  credentials: true
+}));
 app.use(xss());
 app.use(hpp());
 
@@ -55,25 +48,22 @@ const limiter = rateLimit({
 app.use('/api', limiter);
 
 // Mount routers
-app.use('/api/auth', require('./routes/authRoutes'));
+app.use('/api/auth', require('./routes/auth'));
 app.use('/api/users', require('./routes/users'));
-app.use('/api/services', require('./routes/services'));
+app.use('/api/content', require('./routes/content'));
 app.use('/api/comments', require('./routes/comments'));
-
-// Serve static files from the uploads directory
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Serve static assets in production
 if (process.env.NODE_ENV === 'production') {
   // Set static folder
-  app.use(express.static(path.join(__dirname, '../client/build')));
+  app.use(express.static(path.join(__dirname, 'client/build')));
   
   app.get('*', (req, res) => {
-    res.sendFile(path.resolve(__dirname, '../client', 'build', 'index.html'));
+    res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
   });
 } else {
   // Handle React routing in development
-  app.get('/', (req, res) => {
+  app.get('*', (req, res) => {
     res.status(200).json({ message: 'API is running' });
   });
 }
@@ -82,21 +72,8 @@ if (process.env.NODE_ENV === 'production') {
 app.use(errorHandler);
 
 // Connect to database
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/contentkosh', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-})
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/contentkosh')
 .then(() => console.log('MongoDB Connected'))
 .catch(err => console.error('MongoDB connection error:', err));
 
-// Handle unhandled promise rejections
-process.on('unhandledRejection', (err, promise) => {
-  console.error('Unhandled Rejection:', err.message);
-  // Close server & exit process
-  process.exit(1);
-});
-
-const PORT = process.env.PORT || 5001;
-app.listen(PORT, () => {
-  console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
-});
+module.exports = app;

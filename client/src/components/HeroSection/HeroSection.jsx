@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
+import React from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 
 const HeroContainer = styled.section`
   min-height: 90vh;
@@ -9,7 +9,7 @@ const HeroContainer = styled.section`
   align-items: center;
   justify-content: center;
   padding: 4rem 2rem;
-  background: ${({ theme }) => `linear-gradient(135deg, ${theme.colors.primary}, ${theme.colors.secondary})`};
+  background: linear-gradient(135deg, #2196F3, #1976D2);
   position: relative;
   overflow: hidden;
   @media (max-width: 768px) {
@@ -40,11 +40,11 @@ const TextContent = styled.div`
 const Title = styled(motion.h1)`
   font-size: 4rem;
   font-weight: 700;
-  color: ${({ theme }) => theme.colors.text};
+  color: white;
   margin-bottom: 1.5rem;
   line-height: 1.2;
   span {
-    color: ${({ theme }) => theme.colors.primary};
+    color: #FFC107;
   }
   @media (max-width: 768px) {
     font-size: 2.5rem;
@@ -53,7 +53,7 @@ const Title = styled(motion.h1)`
 
 const Subtitle = styled(motion.p)`
   font-size: 1.25rem;
-  color: ${({ theme }) => theme.colors.textSecondary};
+  color: rgba(255, 255, 255, 0.9);
   margin-bottom: 2rem;
   line-height: 1.6;
   max-width: 600px;
@@ -64,61 +64,41 @@ const Subtitle = styled(motion.p)`
   }
 `;
 
-const Form = styled.form`
+const ButtonGroup = styled.div`
   display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-`;
-
-const FormGroup = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-`;
-
-const Label = styled.label`
-  color: ${({ theme }) => theme.colors.text};
-  font-weight: 500;
-`;
-
-const Input = styled.input`
-  padding: 0.75rem;
-  border: 1px solid ${({ theme }) => theme.colors.border};
-  border-radius: 4px;
-  background-color: ${({ theme }) => theme.colors.background};
-  color: ${({ theme }) => theme.colors.text};
-  font-size: 1rem;
-  &:focus {
-    outline: none;
-    border-color: ${({ theme }) => theme.colors.primary};
+  gap: 1rem;
+  @media (max-width: 768px) {
+    justify-content: center;
   }
 `;
 
-const Button = styled.button`
-  background-color: ${({ theme }) => theme.colors.primary};
-  color: white;
-  border: none;
-  padding: 1rem;
+const Button = styled(Link)`
+  padding: 1rem 2rem;
   border-radius: 4px;
   font-size: 1.1rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.3s ease;
   cursor: pointer;
-  transition: background-color 0.3s ease;
-  &:hover {
-    background-color: ${({ theme }) => theme.colors.secondary};
-  }
-  &:disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
-  }
-`;
 
-const SuccessMessage = styled.div`
-  background-color: #4caf50;
-  color: white;
-  padding: 1rem;
-  border-radius: 4px;
-  text-align: center;
-  margin-top: 1rem;
+  &.primary {
+    background-color: #FFC107;
+    color: #333;
+    &:hover {
+      background-color: #FFB300;
+      transform: translateY(-2px);
+    }
+  }
+
+  &.secondary {
+    background-color: transparent;
+    color: white;
+    border: 2px solid white;
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+      transform: translateY(-2px);
+    }
+  }
 `;
 
 const BackgroundShape = styled(motion.div)`
@@ -126,7 +106,7 @@ const BackgroundShape = styled(motion.div)`
   width: 500px;
   height: 500px;
   border-radius: 50%;
-  background: ${({ theme }) => theme.colors.primary}15;
+  background: rgba(255, 255, 255, 0.1);
   filter: blur(80px);
   z-index: 0;
   &.shape1 {
@@ -136,96 +116,11 @@ const BackgroundShape = styled(motion.div)`
   &.shape2 {
     bottom: -100px;
     left: -100px;
-    background: ${({ theme }) => theme.colors.primary}10;
+    background: rgba(255, 255, 255, 0.05);
   }
 `;
 
-const ImageContainer = styled(motion.div)`
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: relative;
-  img {
-    max-width: 100%;
-    height: auto;
-    border-radius: 12px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-  }
-  @media (max-width: 968px) {
-    width: 100%;
-    max-width: 500px;
-    margin: 0 auto;
-  }
-`;
-
-const HeroSection = ({ onGetStarted, onLearnMore }) => {
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        duration: 0.5,
-        staggerChildren: 0.2
-      }
-    }
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.5
-      }
-    }
-  };
-
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    message: ''
-  });
-
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
-
-  useEffect(() => {
-    // Some effect logic if needed
-    // For example, initializing form data from local storage
-    const savedFormData = localStorage.getItem('formData');
-    if (savedFormData) {
-      setFormData(JSON.parse(savedFormData));
-    }
-  }, []);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    // Reset form and show success message
-    setFormData({ name: '', email: '', message: '' });
-    setIsSubmitting(false);
-    setIsSubmitted(true);
-
-    // Hide success message after 3 seconds
-    setTimeout(() => {
-      setIsSubmitted(false);
-    }, 3000);
-  };
-
+const HeroSection = () => {
   return (
     <HeroContainer>
       <BackgroundShape 
@@ -252,70 +147,48 @@ const HeroSection = ({ onGetStarted, onLearnMore }) => {
           repeatType: "reverse"
         }}
       />
-      <ContentWrapper as={motion.div} variants={containerVariants} initial="hidden" animate="visible">
+      <ContentWrapper>
         <TextContent>
-          <Title variants={itemVariants}>
-            Transform Your Content with <span>AI-Powered</span> Solutions
+          <Title
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            Transform Your <span>Content</span> Management
           </Title>
-          <Subtitle variants={itemVariants}>
-            Streamline your content creation process with our advanced AI tools. Create, manage, and optimize your content effortlessly.
+          <Subtitle
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            Streamline your content workflow with our powerful platform. Create, manage, and distribute content effortlessly.
           </Subtitle>
-          <Form onSubmit={handleSubmit}>
-            <FormGroup>
-              <Label>Name</Label>
-              <Input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                required
-              />
-            </FormGroup>
-            <FormGroup>
-              <Label>Email</Label>
-              <Input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                required
-              />
-            </FormGroup>
-            <FormGroup>
-              <Label>Message</Label>
-              <textarea
-                name="message"
-                value={formData.message}
-                onChange={handleChange}
-                required
-              />
-            </FormGroup>
-            <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? 'Sending...' : 'Send Message'}
+          <ButtonGroup>
+            <Button 
+              to="/auth/register" 
+              className="primary"
+              as={motion.a}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+            >
+              Get Started
             </Button>
-          </Form>
-          {isSubmitted && (
-            <SuccessMessage>Thank you for your message! We'll get back to you soon.</SuccessMessage>
-          )}
+            <Button 
+              to="/about" 
+              className="secondary"
+              as={motion.a}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.6 }}
+            >
+              Learn More
+            </Button>
+          </ButtonGroup>
         </TextContent>
-        <ImageContainer
-          variants={itemVariants}
-          whileHover={{ scale: 1.02 }}
-          transition={{ duration: 0.3 }}
-        >
-          <img 
-            src="/assets/hero-image.png" 
-            alt="AI Content Management Platform"
-            loading="eager"
-          />
-        </ImageContainer>
       </ContentWrapper>
     </HeroContainer>
   );
 };
 
-HeroSection.propTypes = {
-  onGetStarted: PropTypes.func.isRequired,
-  onLearnMore: PropTypes.func.isRequired
-};
 export default HeroSection;
