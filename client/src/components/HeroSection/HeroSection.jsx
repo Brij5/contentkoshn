@@ -2,17 +2,13 @@ import React from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { FiArrowRight } from 'react-icons/fi';
 
 const Section = styled.section`
-  padding: 6rem 2rem;
+  min-height: calc(100vh - 80px);
+  display: flex;
+  align-items: center;
+  padding: 2rem;
   background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-  overflow: hidden;
-  position: relative;
-
-  @media (max-width: 768px) {
-    padding: 4rem 1rem;
-  }
 `;
 
 const Container = styled.div`
@@ -38,12 +34,8 @@ const Content = styled.div`
 const Title = styled(motion.h1)`
   font-size: 3.5rem;
   color: #333;
-  line-height: 1.2;
   margin-bottom: 1.5rem;
-
-  span {
-    color: #2196F3;
-  }
+  line-height: 1.2;
 
   @media (max-width: 768px) {
     font-size: 2.5rem;
@@ -53,8 +45,8 @@ const Title = styled(motion.h1)`
 const Description = styled(motion.p)`
   font-size: 1.25rem;
   color: #666;
-  line-height: 1.6;
   margin-bottom: 2rem;
+  line-height: 1.6;
 `;
 
 const ButtonGroup = styled(motion.div)`
@@ -66,59 +58,52 @@ const ButtonGroup = styled(motion.div)`
   }
 `;
 
-const PrimaryButton = styled(Link)`
+const Button = styled(Link)`
   padding: 1rem 2rem;
-  background: #2196F3;
-  color: white;
-  border-radius: 8px;
+  border-radius: 4px;
   font-size: 1.1rem;
   font-weight: 500;
   text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
   transition: all 0.3s ease;
 
-  &:hover {
-    background: #1976D2;
-    transform: translateY(-2px);
+  &.primary {
+    background-color: #2196F3;
+    color: white;
+    border: none;
+
+    &:hover {
+      background-color: #1976D2;
+    }
+  }
+
+  &.secondary {
+    background-color: transparent;
+    color: #2196F3;
+    border: 2px solid #2196F3;
+
+    &:hover {
+      background-color: #2196F3;
+      color: white;
+    }
   }
 `;
 
-const SecondaryButton = styled(Link)`
-  padding: 1rem 2rem;
-  background: transparent;
-  color: #2196F3;
-  border: 2px solid #2196F3;
-  border-radius: 8px;
-  font-size: 1.1rem;
-  font-weight: 500;
-  text-decoration: none;
-  display: inline-flex;
+const ImageWrapper = styled(motion.div)`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
   align-items: center;
-  gap: 0.5rem;
-  transition: all 0.3s ease;
-
-  &:hover {
-    background: #2196F310;
-    transform: translateY(-2px);
-  }
-`;
-
-const ImageContainer = styled(motion.div)`
-  position: relative;
-
-  img {
-    width: 100%;
-    height: auto;
-    border-radius: 12px;
-  }
 
   @media (max-width: 968px) {
     order: 1;
-    max-width: 500px;
-    margin: 0 auto;
   }
+`;
+
+const Image = styled.img`
+  width: 100%;
+  max-width: 500px;
+  height: auto;
 `;
 
 const HeroSection = () => {
@@ -126,40 +111,41 @@ const HeroSection = () => {
     <Section>
       <Container>
         <Content>
-          <motion.div
+          <Title
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: 0.5 }}
           >
-            <Title>
-              Streamline Your <span>Content</span> Management
-            </Title>
-            <Description>
-              Create, manage, and deliver content effortlessly with our powerful platform.
-              Built for modern teams and businesses.
-            </Description>
-            <ButtonGroup>
-              <PrimaryButton to="/register">
-                Get Started <FiArrowRight />
-              </PrimaryButton>
-              <SecondaryButton to="/demo">
-                View Demo
-              </SecondaryButton>
-            </ButtonGroup>
-          </motion.div>
+            Manage Your Content with Ease
+          </Title>
+          <Description
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+          >
+            A powerful content management system that helps you create, organize,
+            and publish content efficiently across multiple platforms.
+          </Description>
+          <ButtonGroup
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            <Button to="/auth/register" className="primary">
+              Get Started
+            </Button>
+            <Button to="/about" className="secondary">
+              Learn More
+            </Button>
+          </ButtonGroup>
         </Content>
-
-        <ImageContainer
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6 }}
+        <ImageWrapper
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5 }}
         >
-          <img 
-            src="/images/hero-illustration.svg" 
-            alt="ContentKosh Platform" 
-            loading="eager"
-          />
-        </ImageContainer>
+          <Image src="/images/hero-illustration.svg" alt="Content Management" />
+        </ImageWrapper>
       </Container>
     </Section>
   );

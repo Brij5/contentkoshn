@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
-import { FiEdit, FiLayout, FiImage, FiPieChart, FiLayers, FiGlobe } from 'react-icons/fi';
+import { FiEdit, FiLayout, FiImage, FiPieChart, FiLayers, FiGlobe, FiArrowRight } from 'react-icons/fi';
 
 const Section = styled.section`
   padding: 6rem 2rem;
@@ -44,10 +44,15 @@ const ServiceCard = styled(motion.div)`
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
   border: 1px solid #eee;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  cursor: pointer;
 
   &:hover {
     transform: translateY(-5px);
     box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+    border-color: ${({ color }) => color || '#2196F3'};
   }
 `;
 
@@ -74,6 +79,24 @@ const ServiceDescription = styled.p`
   color: #666;
   font-size: 1rem;
   line-height: 1.6;
+`;
+
+const LearnMoreButton = styled.button`
+  background: none;
+  border: none;
+  color: ${({ color }) => color || '#2196F3'};
+  font-weight: 500;
+  margin-top: auto;
+  padding-top: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: opacity 0.3s ease;
+
+  &:hover {
+    opacity: 0.8;
+  }
 `;
 
 const services = [
@@ -159,12 +182,16 @@ const ServicesSection = () => {
             <ServiceCard
               key={index}
               variants={cardVariants}
+              color={service.color}
             >
               <IconWrapper color={service.color}>
                 {service.icon}
               </IconWrapper>
               <ServiceTitle>{service.title}</ServiceTitle>
               <ServiceDescription>{service.description}</ServiceDescription>
+              <LearnMoreButton color={service.color}>
+                Learn More <FiArrowRight />
+              </LearnMoreButton>
             </ServiceCard>
           ))}
         </Grid>
