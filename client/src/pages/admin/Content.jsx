@@ -36,7 +36,7 @@ const Header = styled.div`
 `;
 
 const Title = styled.h1`
-  color: ${({ theme }) => theme.textColor};
+  color: #333;
   font-size: 2rem;
   font-weight: 700;
 `;
@@ -55,7 +55,7 @@ const SearchBar = styled.div`
     left: 1rem;
     top: 50%;
     transform: translateY(-50%);
-    color: ${({ theme }) => theme.textColorLight};
+    color: #666;
   }
 `;
 
@@ -64,7 +64,7 @@ const SearchInput = styled(Input)`
 `;
 
 const Table = styled.div`
-  background: ${({ theme }) => theme.cardBackground};
+  background: white;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   overflow: hidden;
@@ -74,12 +74,12 @@ const TableHeader = styled.div`
   display: grid;
   grid-template-columns: 2fr 1fr 1fr 1fr 1fr 120px;
   padding: 1rem 1.5rem;
-  background: ${({ theme }) => theme.backgroundSecondary};
-  border-bottom: 1px solid ${({ theme }) => theme.borderColor};
+  background: #f8f9fa;
+  border-bottom: 1px solid #eee;
   gap: 1rem;
 
   span {
-    color: ${({ theme }) => theme.textColorLight};
+    color: #666;
     font-weight: 600;
     font-size: 0.875rem;
   }
@@ -89,7 +89,7 @@ const TableRow = styled(motion.div)`
   display: grid;
   grid-template-columns: 2fr 1fr 1fr 1fr 1fr 120px;
   padding: 1rem 1.5rem;
-  border-bottom: 1px solid ${({ theme }) => theme.borderColor};
+  border-bottom: 1px solid #eee;
   align-items: center;
   gap: 1rem;
 
@@ -98,7 +98,7 @@ const TableRow = styled(motion.div)`
   }
 
   &:hover {
-    background: ${({ theme }) => theme.backgroundSecondary};
+    background: #f8f9fa;
   }
 `;
 
@@ -106,7 +106,7 @@ const ContentTitle = styled.div`
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  color: ${({ theme }) => theme.textColor};
+  color: #333;
   font-weight: 500;
 `;
 
@@ -114,8 +114,8 @@ const ContentIcon = styled.div`
   width: 40px;
   height: 40px;
   border-radius: 8px;
-  background: ${({ theme }) => theme.primaryColor}15;
-  color: ${({ theme }) => theme.primaryColor};
+  background: #2196F315;
+  color: #2196F3;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -129,7 +129,7 @@ const ContentInfo = styled.div`
 `;
 
 const ContentMeta = styled.div`
-  color: ${({ theme }) => theme.textColorLight};
+  color: #666;
   font-size: 0.75rem;
 `;
 
@@ -142,27 +142,27 @@ const Status = styled.span`
   align-items: center;
   gap: 0.25rem;
 
-  ${({ status, theme }) => {
+  ${({ status }) => {
     switch (status) {
       case 'published':
         return `
-          background: ${theme.successColor}15;
-          color: ${theme.successColor};
+          background: #4CAF5015;
+          color: #4CAF50;
         `;
       case 'draft':
         return `
-          background: ${theme.warningColor}15;
-          color: ${theme.warningColor};
+          background: #FFC10715;
+          color: #FFC107;
         `;
       case 'archived':
         return `
-          background: ${theme.errorColor}15;
-          color: ${theme.errorColor};
+          background: #F4433615;
+          color: #F44336;
         `;
       default:
         return `
-          background: ${theme.textColorLight}15;
-          color: ${theme.textColorLight};
+          background: #66666615;
+          color: #666666;
         `;
     }
   }}
@@ -176,15 +176,15 @@ const Actions = styled.div`
 const IconButton = styled.button`
   background: none;
   border: none;
-  color: ${({ theme }) => theme.textColorLight};
+  color: #666;
   padding: 0.5rem;
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s ease;
 
   &:hover {
-    background: ${({ theme }) => theme.backgroundSecondary};
-    color: ${({ theme }) => theme.textColor};
+    background: #f8f9fa;
+    color: #333;
   }
 `;
 
@@ -216,7 +216,7 @@ const FormGroup = styled.div`
 `;
 
 const Label = styled.label`
-  color: ${({ theme }) => theme.textColor};
+  color: #333;
   font-weight: 500;
 `;
 
@@ -224,21 +224,21 @@ const TextArea = styled.textarea`
   width: 100%;
   min-height: 120px;
   padding: 0.75rem;
-  border: 1px solid ${({ theme }) => theme.borderColor};
+  border: 1px solid #eee;
   border-radius: 8px;
-  background: ${({ theme }) => theme.backgroundSecondary};
-  color: ${({ theme }) => theme.textColor};
+  background: white;
+  color: #333;
   font-family: inherit;
   resize: vertical;
 
   &:focus {
     outline: none;
-    border-color: ${({ theme }) => theme.primaryColor};
+    border-color: #2196F3;
   }
 `;
 
 const UploadArea = styled.div`
-  border: 2px dashed ${({ theme }) => theme.borderColor};
+  border: 2px dashed #eee;
   border-radius: 8px;
   padding: 2rem;
   text-align: center;
@@ -246,18 +246,23 @@ const UploadArea = styled.div`
   transition: all 0.2s ease;
 
   &:hover {
-    border-color: ${({ theme }) => theme.primaryColor};
+    border-color: #2196F3;
   }
 
   svg {
     font-size: 2rem;
-    color: ${({ theme }) => theme.textColorLight};
+    color: #666;
     margin-bottom: 1rem;
   }
 
   p {
-    color: ${({ theme }) => theme.textColorLight};
-    margin: 0;
+    color: #666;
+    margin-bottom: 0.5rem;
+  }
+
+  span {
+    color: #2196F3;
+    font-size: 0.875rem;
   }
 `;
 

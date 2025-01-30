@@ -1,26 +1,20 @@
 import React from 'react';
-import ReactDOM from 'react-dom/client';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
-import { persistStore } from 'redux-persist';
+import { createRoot } from 'react-dom/client';
+import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
-import { store } from './store';
-import { ThemeProvider } from './contexts/ThemeContext';
-import { AuthProvider } from './contexts/AuthContext';
+import { store, persistor } from './store';
+import App from './App';
+import './index.css';
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-const persistor = persistStore(store);
+const container = document.getElementById('root');
+const root = createRoot(container);
 
 root.render(
   <React.StrictMode>
-    <ThemeProvider>
-      <AuthProvider>
-        <PersistGate loading={null} persistor={persistor}>
-          <App />
-        </PersistGate>
-      </AuthProvider>
-    </ThemeProvider>
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
+        <App />
+      </PersistGate>
+    </Provider>
   </React.StrictMode>
-);
-
-reportWebVitals();
+); 

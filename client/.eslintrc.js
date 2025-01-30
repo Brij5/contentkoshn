@@ -4,22 +4,28 @@ module.exports = {
     es2021: true,
     node: true,
   },
-  extends: ['react-app', 'react-app/jest'],
+  extends: ['react-app'],
+  parser: '@babel/eslint-parser',
   parserOptions: {
     ecmaFeatures: {
       jsx: true,
     },
-    ecmaVersion: 12,
+    ecmaVersion: 'latest',
     sourceType: 'module',
-  },
-  plugins: ['react-hooks'],
-  rules: {
-    'react-hooks/rules-of-hooks': 'error',
-    'react-hooks/exhaustive-deps': 'warn',
+    requireConfigFile: false,
+    babelOptions: {
+      presets: ['@babel/preset-react']
+    }
   },
   settings: {
     react: {
       version: 'detect',
     },
   },
+  rules: {
+    'no-unused-vars': 'warn',
+    'no-console': 'warn',
+    'react/prop-types': 'off',
+    'react/react-in-jsx-scope': 'off'
+  }
 }; 

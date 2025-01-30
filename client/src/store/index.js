@@ -6,19 +6,19 @@ import authReducer from './slices/authSlice';
 const persistConfig = {
   key: 'root',
   storage,
-  whitelist: ['auth'], // only auth will be persisted
+  whitelist: ['auth']
 };
 
 const persistedAuthReducer = persistReducer(persistConfig, authReducer);
 
 export const store = configureStore({
   reducer: {
-    auth: persistedAuthReducer,
+    auth: persistedAuthReducer
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
-      serializableCheck: false,
-    }),
+      serializableCheck: false
+    })
 });
 
 export const persistor = persistStore(store);

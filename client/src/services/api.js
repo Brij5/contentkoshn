@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { store } from '../store';
 import { logout } from '../store/slices/authSlice';
+import { toast } from 'react-toastify';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5001/api';
 
@@ -10,6 +11,7 @@ const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  timeout: 10000, // 10 second timeout
 });
 
 // Request interceptor for adding auth token
@@ -30,9 +32,21 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
-      store.dispatch(logout());
+    if (!error.response) {
+      // Network error or server not responding
+      toast.error('Unable to connect to server. Please check your connection.');
+      return Promise.reject(new Error('Network error'));
     }
+
+    if (error.response.status === 401) {
+      store.dispatch(logout());
+      toast.error('Session expired. Please login again.');
+    } else if (error.response.status === 404) {
+      toast.error('Resource not found');
+    } else if (error.response.status >= 500) {
+      toast.error('Server error. Please try again later.');
+    }
+
     return Promise.reject(error);
   }
 );
@@ -66,55 +80,28 @@ export const contentAPI = {
 
 // User API calls
 export const userAPI = {
-  getProfile: async () => {
-    return api.get('/users/profile');
-  },
-  
-  updateProfile: async (userData) => {
-    return api.put('/users/updatedetails', userData);
-  },
-  
-  updatePassword: async (data) => {
-    return api.put('/users/updatepassword', data);
-  },
-  
-  uploadAvatar: async (formData) => {
-    return api.post('/users/avatar', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
-  },
+  getProfile: () => api.get('/users/profile'),
+  updateProfile: (userData) => api.put('/users/updatedetails', userData),
+  updatePassword: (data) => api.put('/users/updatepassword', data),
+  uploadAvatar: (formData) => api.post('/users/avatar', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  }),
 };
 
 // Blog API calls
 export const blogAPI = {
-  getBlogs: async (params) => {
-    return api.get('/blogs', { params });
-  },
-  
-  getBlogById: async (id) => {
-    return api.get(`/blogs/${id}`);
-  },
-  
-  createBlog: async (blogData) => {
-    return api.post('/blogs', blogData);
-  },
-  
-  updateBlog: async (id, blogData) => {
-    return api.put(`/blogs/${id}`, blogData);
-  },
-  
-  deleteBlog: async (id) => {
-    return api.delete(`/blogs/${id}`);
-  },
+  getBlogs: (params) => api.get('/blogs', { params }),
+  getBlogById: (id) => api.get(`/blogs/${id}`),
+  createBlog: (blogData) => api.post('/blogs', blogData),
+  updateBlog: (id, blogData) => api.put(`/blogs/${id}`, blogData),
+  deleteBlog: (id) => api.delete(`/blogs/${id}`),
 };
 
 // Contact API calls
 export const contactAPI = {
-  submitContact: async (contactData) => {
-    return api.post('/contact', contactData);
-  },
+  submitContact: (contactData) => api.post('/contact', contactData),
 };
 
 export default api;

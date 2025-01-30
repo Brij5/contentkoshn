@@ -3,71 +3,57 @@ import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
-const HeroContainer = styled.section`
-  min-height: 90vh;
+const Section = styled.section`
+  min-height: calc(100vh - 80px);
   display: flex;
   align-items: center;
-  justify-content: center;
-  padding: 4rem 2rem;
-  background: linear-gradient(135deg, #2196F3, #1976D2);
-  position: relative;
-  overflow: hidden;
-  @media (max-width: 768px) {
-    padding: 2rem 1rem;
-    min-height: 80vh;
-  }
+  padding: 2rem;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
 `;
 
-const ContentWrapper = styled.div`
+const Container = styled.div`
   max-width: 1200px;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 4rem;
+  align-items: center;
+
   @media (max-width: 968px) {
-    flex-direction: column;
+    grid-template-columns: 1fr;
     text-align: center;
-    gap: 2rem;
   }
 `;
 
-const TextContent = styled.div`
-  flex: 1;
-  z-index: 1;
+const Content = styled.div`
+  @media (max-width: 968px) {
+    order: 2;
+  }
 `;
 
 const Title = styled(motion.h1)`
-  font-size: 4rem;
-  font-weight: 700;
-  color: white;
+  font-size: 3.5rem;
+  color: #333;
   margin-bottom: 1.5rem;
   line-height: 1.2;
-  span {
-    color: #FFC107;
-  }
+
   @media (max-width: 768px) {
     font-size: 2.5rem;
   }
 `;
 
-const Subtitle = styled(motion.p)`
+const Description = styled(motion.p)`
   font-size: 1.25rem;
-  color: rgba(255, 255, 255, 0.9);
+  color: #666;
   margin-bottom: 2rem;
   line-height: 1.6;
-  max-width: 600px;
-  @media (max-width: 768px) {
-    font-size: 1.1rem;
-    margin-left: auto;
-    margin-right: auto;
-  }
 `;
 
-const ButtonGroup = styled.div`
+const ButtonGroup = styled(motion.div)`
   display: flex;
   gap: 1rem;
-  @media (max-width: 768px) {
+
+  @media (max-width: 968px) {
     justify-content: center;
   }
 `;
@@ -79,115 +65,89 @@ const Button = styled(Link)`
   font-weight: 500;
   text-decoration: none;
   transition: all 0.3s ease;
-  cursor: pointer;
 
   &.primary {
-    background-color: #FFC107;
-    color: #333;
+    background-color: #2196F3;
+    color: white;
+    border: none;
+
     &:hover {
-      background-color: #FFB300;
-      transform: translateY(-2px);
+      background-color: #1976D2;
     }
   }
 
   &.secondary {
     background-color: transparent;
-    color: white;
-    border: 2px solid white;
+    color: #2196F3;
+    border: 2px solid #2196F3;
+
     &:hover {
-      background-color: rgba(255, 255, 255, 0.1);
-      transform: translateY(-2px);
+      background-color: #2196F3;
+      color: white;
     }
   }
 `;
 
-const BackgroundShape = styled(motion.div)`
-  position: absolute;
-  width: 500px;
-  height: 500px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.1);
-  filter: blur(80px);
-  z-index: 0;
-  &.shape1 {
-    top: -100px;
-    right: -100px;
+const ImageWrapper = styled(motion.div)`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  @media (max-width: 968px) {
+    order: 1;
   }
-  &.shape2 {
-    bottom: -100px;
-    left: -100px;
-    background: rgba(255, 255, 255, 0.05);
-  }
+`;
+
+const Image = styled.img`
+  width: 100%;
+  max-width: 500px;
+  height: auto;
 `;
 
 const HeroSection = () => {
   return (
-    <HeroContainer>
-      <BackgroundShape 
-        className="shape1"
-        animate={{
-          scale: [1, 1.2, 1],
-          rotate: [0, 90, 0]
-        }}
-        transition={{
-          duration: 20,
-          repeat: Infinity,
-          repeatType: "reverse"
-        }}
-      />
-      <BackgroundShape 
-        className="shape2"
-        animate={{
-          scale: [1, 1.1, 1],
-          rotate: [0, -90, 0]
-        }}
-        transition={{
-          duration: 15,
-          repeat: Infinity,
-          repeatType: "reverse"
-        }}
-      />
-      <ContentWrapper>
-        <TextContent>
+    <Section>
+      <Container>
+        <Content>
           <Title
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            Transform Your <span>Content</span> Management
+            Manage Your Content with Ease
           </Title>
-          <Subtitle
+          <Description
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+          >
+            A powerful content management system that helps you create, organize,
+            and publish content efficiently across multiple platforms.
+          </Description>
+          <ButtonGroup
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            Streamline your content workflow with our powerful platform. Create, manage, and distribute content effortlessly.
-          </Subtitle>
-          <ButtonGroup>
-            <Button 
-              to="/auth/register" 
-              className="primary"
-              as={motion.a}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.4 }}
-            >
+            <Button to="/auth/register" className="primary">
               Get Started
             </Button>
-            <Button 
-              to="/about" 
-              className="secondary"
-              as={motion.a}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.6 }}
-            >
+            <Button to="/about" className="secondary">
               Learn More
             </Button>
           </ButtonGroup>
-        </TextContent>
-      </ContentWrapper>
-    </HeroContainer>
+        </Content>
+        <ImageWrapper
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5 }}
+        >
+          <Image src="/images/hero-illustration.svg" alt="Content Management" />
+        </ImageWrapper>
+      </Container>
+    </Section>
   );
 };
 

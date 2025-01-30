@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { handleApiError } from '../../utils/errorHandler';
 
 const initialState = {
   isAuthenticated: false,
@@ -46,3 +47,9 @@ const authSlice = createSlice({
 export const { login, logout, setUser, setError, clearError, setLoading } = authSlice.actions;
 
 export default authSlice.reducer;
+
+try {
+  // Your code
+} catch (error) {
+  handleApiError(error);
+}
