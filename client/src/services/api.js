@@ -1,18 +1,19 @@
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5001/api';
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
 // Create axios instance with default config
-const api = axios.create({
+const axiosInstance = axios.create({
   baseURL: API_URL,
   headers: {
-    'Content-Type': 'application/json',
+    'Content-Type': 'application/json'
   },
+  withCredentials: true
 });
 
 // Request interceptor for adding auth token
-api.interceptors.request.use(
+axiosInstance.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
     if (token) {
@@ -26,94 +27,207 @@ api.interceptors.request.use(
 );
 
 // Response interceptor for handling errors
-api.interceptors.response.use(
+axiosInstance.interceptors.response.use(
   (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
-      localStorage.removeItem('token');
-      window.location.href = '/auth/login';
+  async (error) => {
+    const originalRequest = error.config;
+
+    // Handle token expiration
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+      try {
+        const response = await axios.post(`${API_URL}/auth/refresh-token`);
+        const { token } = response.data;
+        if (token) {
+          localStorage.setItem('token', token);
+          axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+          return axiosInstance(originalRequest);
+        }
+      } catch (refreshError) {
+        localStorage.removeItem('token');
+        window.location.href = '/auth/login';
+        return Promise.reject(refreshError);
+      }
     }
+
+    // Handle other errors
+    const message = error.response?.data?.message || 'An error occurred';
+    toast.error(message);
     return Promise.reject(error);
   }
 );
 
-// Auth endpoints
-export const authAPI = {
-  login: (credentials) => api.post('/auth/login', credentials),
-  register: (userData) => api.post('/auth/register', userData),
-  forgotPassword: (email) => api.post('/auth/forgot-password', { email }),
-  resetPassword: (token, password) => api.post(`/auth/reset-password/${token}`, { password }),
-  verifyEmail: (token) => api.get(`/auth/verify-email/${token}`),
-};
+class ApiService {
+  constructor(resourcePath) {
+    this.resourcePath = resourcePath;
+  }
 
-// Users endpoints
-export const usersAPI = {
-  getUsers: () => api.get('/users'),
-  getUser: (id) => api.get(`/users/${id}`),
-  updateUser: (id, userData) => api.put(`/users/${id}`, userData),
-  deleteUser: (id) => api.delete(`/users/${id}`),
-};
+  // Generic CRUD operations
+  async getAll(params = {}) {
+    try {
+      const response = await axiosInstance.get(this.resourcePath, { params });
+      return response.data;
+    } catch (error) {
+      throw this.handleError('fetching', error);
+    }
+  }
 
-// Content endpoints
-export const contentAPI = {
-  getContent: () => api.get('/content'),
-  getContentById: (id) => api.get(`/content/${id}`),
-  createContent: (contentData) => api.post('/content', contentData),
-  updateContent: (id, contentData) => api.put(`/content/${id}`, contentData),
-  deleteContent: (id) => api.delete(`/content/${id}`),
-};
+  async getById(id) {
+    try {
+      const response = await axiosInstance.get(`${this.resourcePath}/${id}`);
+      return response.data;
+    } catch (error) {
+      throw this.handleError('fetching', error);
+    }
+  }
 
-// User API calls
-export const userAPI = {
-  getProfile: async () => {
-    return api.get('/users/profile');
-  },
-  
-  updateProfile: async (userData) => {
-    return api.put('/users/profile', userData);
-  },
-  
-  updatePassword: async (passwords) => {
-    return api.put('/users/password', passwords);
-  },
-  
-  uploadAvatar: async (formData) => {
-    return api.post('/users/avatar', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
-  },
-};
+  async create(data) {
+    try {
+      const response = await axiosInstance.post(this.resourcePath, data);
+      return response.data;
+    } catch (error) {
+      throw this.handleError('creating', error);
+    }
+  }
 
-// Blog API calls
-export const blogAPI = {
-  getBlogs: async (params) => {
-    return api.get('/blogs', { params });
-  },
-  
-  getBlogById: async (id) => {
-    return api.get(`/blogs/${id}`);
-  },
-  
-  createBlog: async (blogData) => {
-    return api.post('/blogs', blogData);
-  },
-  
-  updateBlog: async (id, blogData) => {
-    return api.put(`/blogs/${id}`, blogData);
-  },
-  
-  deleteBlog: async (id) => {
-    return api.delete(`/blogs/${id}`);
-  },
-};
+  async update(id, data) {
+    try {
+      const response = await axiosInstance.patch(`${this.resourcePath}/${id}`, data);
+      return response.data;
+    } catch (error) {
+      throw this.handleError('updating', error);
+    }
+  }
 
-// Contact API calls
-export const contactAPI = {
-  submitContact: async (contactData) => {
-    return api.post('/contact', contactData);
-  },
-};
+  async delete(id) {
+    try {
+      const response = await axiosInstance.delete(`${this.resourcePath}/${id}`);
+      return response.data;
+    } catch (error) {
+      throw this.handleError('deleting', error);
+    }
+  }
 
-export default api;
+  // Advanced operations
+  async search(query) {
+    try {
+      const response = await axiosInstance.get(`${this.resourcePath}/search`, { params: { query } });
+      return response.data;
+    } catch (error) {
+      throw this.handleError('searching', error);
+    }
+  }
+
+  async uploadFile(file, onProgress) {
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      const response = await axiosInstance.post(`${this.resourcePath}/upload`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        },
+        onUploadProgress: (progressEvent) => {
+          if (onProgress) {
+            const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+            onProgress(percentCompleted);
+          }
+        }
+      });
+      return response.data;
+    } catch (error) {
+      throw this.handleError('uploading', error);
+    }
+  }
+
+  async downloadFile(fileId) {
+    try {
+      const response = await axiosInstance.get(`${this.resourcePath}/download/${fileId}`, {
+        responseType: 'blob'
+      });
+      return response.data;
+    } catch (error) {
+      throw this.handleError('downloading', error);
+    }
+  }
+
+  // Bulk operations
+  async bulkCreate(data) {
+    try {
+      const response = await axiosInstance.post(`${this.resourcePath}/bulk`, data);
+      return response.data;
+    } catch (error) {
+      throw this.handleError('bulk creating', error);
+    }
+  }
+
+  async bulkUpdate(data) {
+    try {
+      const response = await axiosInstance.patch(`${this.resourcePath}/bulk`, data);
+      return response.data;
+    } catch (error) {
+      throw this.handleError('bulk updating', error);
+    }
+  }
+
+  async bulkDelete(ids) {
+    try {
+      const response = await axiosInstance.delete(`${this.resourcePath}/bulk`, { data: { ids } });
+      return response.data;
+    } catch (error) {
+      throw this.handleError('bulk deleting', error);
+    }
+  }
+
+  // Export/Import operations
+  async export(format = 'csv') {
+    try {
+      const response = await axiosInstance.get(`${this.resourcePath}/export`, {
+        params: { format },
+        responseType: 'blob'
+      });
+      return response.data;
+    } catch (error) {
+      throw this.handleError('exporting', error);
+    }
+  }
+
+  async import(file, onProgress) {
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      const response = await axiosInstance.post(`${this.resourcePath}/import`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        },
+        onUploadProgress: (progressEvent) => {
+          if (onProgress) {
+            const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+            onProgress(percentCompleted);
+          }
+        }
+      });
+      return response.data;
+    } catch (error) {
+      throw this.handleError('importing', error);
+    }
+  }
+
+  // Error handling
+  handleError(action, error) {
+    console.error(`Error ${action}:`, error);
+    const message = error.response?.data?.message || `Failed while ${action}`;
+    return new Error(message);
+  }
+}
+
+// Create service instances
+export const authAPI = new ApiService('/auth');
+export const usersAPI = new ApiService('/users');
+export const servicesAPI = new ApiService('/services');
+export const contentAPI = new ApiService('/content');
+export const commentsAPI = new ApiService('/comments');
+export const contactAPI = new ApiService('/contact');
+
+// Export factory function and instance
+export const createApiService = (resourcePath) => new ApiService(resourcePath);
+export default axiosInstance;

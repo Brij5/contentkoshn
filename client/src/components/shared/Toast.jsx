@@ -1,56 +1,74 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import styled from 'styled-components';
-import { motion } from 'framer-motion';
-import { FiCheckCircle, FiAlertCircle, FiInfo, FiAlertTriangle, FiX } from 'react-icons/fi';
+import React, { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import styled, { keyframes } from 'styled-components';
+import { selectToasts } from '../../store/slices/uiSlice';
+import { removeToast } from '../../store/slices/uiSlice';
+import { 
+  FiCheckCircle, 
+  FiAlertCircle, 
+  FiInfo, 
+  FiAlertTriangle,
+  FiX
+} from 'react-icons/fi';
 
-const ToastContainer = styled(motion.div)`
+const slideIn = keyframes`
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+`;
+
+const slideOut = keyframes`
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+`;
+
+const ToastContainer = styled.div`
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-width: 400px;
+  
+  @media (max-width: 768px) {
+    left: 1rem;
+    right: 1rem;
+  }
+`;
+
+const ToastItem = styled.div`
   display: flex;
   align-items: flex-start;
   gap: 0.75rem;
   padding: 1rem;
-  background: ${({ theme, variant }) => {
-    switch (variant) {
+  background: ${({ theme, $type }) => {
+    switch ($type) {
       case 'success':
-        return theme.successColor + '10';
+        return theme.successBackground;
       case 'error':
-        return theme.errorColor + '10';
+        return theme.errorBackground;
       case 'warning':
-        return theme.warningColor + '10';
+        return theme.warningBackground;
       case 'info':
-        return theme.infoColor + '10';
       default:
-        return theme.cardBackground;
+        return theme.infoBackground;
     }
   }};
-  border: 1px solid ${({ theme, variant }) => {
-    switch (variant) {
-      case 'success':
-        return theme.successColor + '30';
-      case 'error':
-        return theme.errorColor + '30';
-      case 'warning':
-        return theme.warningColor + '30';
-      case 'info':
-        return theme.infoColor + '30';
-      default:
-        return theme.borderColor;
-    }
-  }};
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  min-width: 300px;
-  max-width: 500px;
-  pointer-events: auto;
-`;
-
-const IconWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  color: ${({ theme, variant }) => {
-    switch (variant) {
+  color: ${({ theme, $type }) => {
+    switch ($type) {
       case 'success':
         return theme.successColor;
       case 'error':
@@ -58,131 +76,125 @@ const IconWrapper = styled.div`
       case 'warning':
         return theme.warningColor;
       case 'info':
-        return theme.infoColor;
       default:
-        return theme.textColor;
+        return theme.infoColor;
     }
   }};
-
-  svg {
-    width: 1.25rem;
-    height: 1.25rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  animation: ${slideIn} 0.3s ease forwards;
+  
+  &.removing {
+    animation: ${slideOut} 0.3s ease forwards;
   }
+`;
+
+const IconWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 1.25rem;
 `;
 
 const Content = styled.div`
   flex: 1;
 `;
 
-const Title = styled.h4`
-  margin: 0;
-  color: ${({ theme }) => theme.textColor};
-  font-size: 0.875rem;
+const Title = styled.div`
   font-weight: 600;
-  line-height: 1.4;
+  margin-bottom: 0.25rem;
 `;
 
-const Message = styled.p`
-  margin: 0.25rem 0 0;
-  color: ${({ theme }) => theme.textColorLight};
+const Message = styled.div`
   font-size: 0.875rem;
-  line-height: 1.4;
+  opacity: 0.9;
 `;
 
 const CloseButton = styled.button`
   background: none;
   border: none;
-  padding: 0;
-  color: ${({ theme }) => theme.textColorLight};
+  color: inherit;
   cursor: pointer;
-  transition: color 0.2s ease;
-
+  padding: 0.25rem;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+  
   &:hover {
-    color: ${({ theme }) => theme.textColor};
-  }
-
-  svg {
-    width: 1.25rem;
-    height: 1.25rem;
+    opacity: 1;
   }
 `;
 
-const toastVariants = {
-  initial: {
-    opacity: 0,
-    y: 50,
-    scale: 0.3,
-  },
-  animate: {
-    opacity: 1,
-    y: 0,
-    scale: 1,
-  },
-  exit: {
-    opacity: 0,
-    scale: 0.5,
-    transition: {
-      duration: 0.2
+const ProgressBar = styled.div`
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  background: currentColor;
+  opacity: 0.3;
+  width: ${({ $progress }) => $progress}%;
+  transition: width 0.1s linear;
+`;
+
+const Toast = () => {
+  const dispatch = useDispatch();
+  const toasts = useSelector(selectToasts);
+
+  useEffect(() => {
+    toasts.forEach(toast => {
+      if (toast.duration !== 0) {
+        const timer = setTimeout(() => {
+          dispatch(removeToast(toast.id));
+        }, toast.duration);
+
+        return () => clearTimeout(timer);
+      }
+    });
+  }, [toasts, dispatch]);
+
+  const getIcon = (type) => {
+    switch (type) {
+      case 'success':
+        return <FiCheckCircle />;
+      case 'error':
+        return <FiAlertCircle />;
+      case 'warning':
+        return <FiAlertTriangle />;
+      case 'info':
+      default:
+        return <FiInfo />;
     }
-  }
-};
+  };
 
-const getIcon = (variant) => {
-  switch (variant) {
-    case 'success':
-      return <FiCheckCircle />;
-    case 'error':
-      return <FiAlertCircle />;
-    case 'warning':
-      return <FiAlertTriangle />;
-    case 'info':
-      return <FiInfo />;
-    default:
-      return null;
-  }
-};
-
-const Toast = ({
-  variant = 'default',
-  title,
-  message,
-  onClose,
-  className
-}) => {
   return (
-    <ToastContainer
-      variant={variant}
-      className={className}
-      variants={toastVariants}
-      initial="initial"
-      animate="animate"
-      exit="exit"
-    >
-      <IconWrapper variant={variant}>
-        {getIcon(variant)}
-      </IconWrapper>
-      <Content>
-        {title && <Title>{title}</Title>}
-        {message && <Message>{message}</Message>}
-      </Content>
-      {onClose && (
-        <CloseButton
-          onClick={onClose}
-          aria-label="Close toast"
-        >
-          <FiX />
-        </CloseButton>
-      )}
+    <ToastContainer>
+      {toasts.map(toast => {
+        const progress = toast.duration === 0 ? 100 : 
+          ((toast.duration - (Date.now() - toast.id)) / toast.duration) * 100;
+
+        return (
+          <ToastItem key={toast.id} $type={toast.type}>
+            <IconWrapper>
+              {getIcon(toast.type)}
+            </IconWrapper>
+            <Content>
+              {toast.title && <Title>{toast.title}</Title>}
+              <Message>{toast.message}</Message>
+            </Content>
+            <CloseButton 
+              onClick={() => dispatch(removeToast(toast.id))}
+              aria-label="Close notification"
+            >
+              <FiX />
+            </CloseButton>
+            {toast.duration > 0 && (
+              <ProgressBar $progress={Math.max(0, progress)} />
+            )}
+          </ToastItem>
+        );
+      })}
     </ToastContainer>
   );
-};
-
-Toast.propTypes = {
-  variant: PropTypes.oneOf(['default', 'success', 'error', 'warning', 'info']),
-  title: PropTypes.string,
-  message: PropTypes.string,
-  onClose: PropTypes.func,
-  className: PropTypes.string
 };
 
 export default Toast; 

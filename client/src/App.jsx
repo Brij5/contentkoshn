@@ -1,23 +1,49 @@
-import React from 'react';
-import { BrowserRouter as Router } from 'react-router-dom';
-import AppRoutes from './routes';
+import React, { useEffect } from 'react';
+import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
-import { store } from './store';
+import { PersistGate } from 'redux-persist/integration/react';
+import { ThemeProvider } from 'styled-components';
+import { ToastContainer } from 'react-toastify';
+import { store, persistor } from './store';
+import { useSelector } from 'react-redux';
+import { selectTheme } from './store/slices/themeSlice';
+import { lightTheme, darkTheme } from './theme';
+import AppRoutes from './routes';
 import GlobalStyles from './styles/GlobalStyles';
-import { ThemeProvider } from './contexts/ThemeContext'; // Use this if it's needed
-import { AuthProvider } from './contexts/AuthContext';
+import 'react-toastify/dist/ReactToastify.css';
+
+const AppContent = () => {
+  const theme = useSelector(selectTheme);
+  const currentTheme = theme.mode === 'dark' ? darkTheme : lightTheme;
+
+  return (
+    <ThemeProvider theme={currentTheme}>
+      <GlobalStyles />
+      <AppRoutes />
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme={theme.mode}
+      />
+    </ThemeProvider>
+  );
+};
 
 const App = () => {
   return (
     <Provider store={store}>
-      <Router>
-        <GlobalStyles />
-        <ThemeProvider> {/* Use ThemeProvider if it's needed */}
-          <AuthProvider>
-            <AppRoutes />
-          </AuthProvider>
-        </ThemeProvider>
-      </Router>
+      <PersistGate loading={null} persistor={persistor}>
+        <BrowserRouter>
+          <AppContent />
+        </BrowserRouter>
+      </PersistGate>
     </Provider>
   );
 };

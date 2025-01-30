@@ -1,7 +1,7 @@
 import { createGlobalStyle } from 'styled-components';
 
 const GlobalStyles = createGlobalStyle`
-  *, *::before, *::after {
+  * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -13,37 +13,40 @@ const GlobalStyles = createGlobalStyle`
   }
 
   body {
-    font-family: ${({ theme }) => theme.fonts.body};
-    background-color: ${({ theme }) => theme.colors.background};
-    color: ${({ theme }) => theme.colors.text};
-    line-height: 1.5;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+      'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+      sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    background: ${({ theme }) => theme.colors.background};
+    color: ${({ theme }) => theme.colors.text};
+    line-height: 1.5;
+    min-height: 100vh;
   }
 
-  h1, h2, h3, h4, h5, h6 {
-    font-family: ${({ theme }) => theme.fonts.heading};
-    line-height: 1.2;
-    margin: 1em 0 0.5em;
-  }
-
-  p {
-    margin-bottom: 1rem;
+  code {
+    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+      monospace;
   }
 
   a {
-    color: ${({ theme }) => theme.colors.primary};
     text-decoration: none;
-    transition: color 0.2s ease;
-
-    &:hover {
-      color: ${({ theme }) => theme.colors.secondary};
-    }
+    color: inherit;
   }
 
   button {
-    font: inherit;
-    color: inherit;
+    cursor: pointer;
+    border: none;
+    background: none;
+    font-family: inherit;
+  }
+
+  input, textarea, select {
+    font-family: inherit;
+  }
+
+  ul, ol {
+    list-style: none;
   }
 
   img {
@@ -51,24 +54,95 @@ const GlobalStyles = createGlobalStyle`
     height: auto;
   }
 
-  /* Custom scrollbar */
+  /* Scrollbar Styles */
   ::-webkit-scrollbar {
     width: 8px;
+    height: 8px;
   }
 
   ::-webkit-scrollbar-track {
-    background: ${({ theme }) => theme.colors.background};
+    background: ${({ theme }) => theme.colors.backgroundSecondary};
   }
 
   ::-webkit-scrollbar-thumb {
-    background: ${({ theme }) => theme.colors.primary};
-    border-radius: ${({ theme }) => theme.radii.full};
+    background: ${({ theme }) => theme.colors.primary}40;
+    border-radius: 4px;
   }
 
-  /* Selection */
-  ::selection {
-    background: ${({ theme }) => theme.colors.primary};
-    color: white;
+  ::-webkit-scrollbar-thumb:hover {
+    background: ${({ theme }) => theme.colors.primary}60;
+  }
+
+  /* Toast Styles */
+  .Toastify__toast {
+    border-radius: 8px;
+    padding: 16px;
+    font-family: inherit;
+  }
+
+  .Toastify__toast-body {
+    font-size: 0.875rem;
+  }
+
+  /* Modal Styles */
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+
+  .modal-content {
+    background: ${({ theme }) => theme.colors.background};
+    padding: 2rem;
+    border-radius: 8px;
+    max-width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+  }
+
+  /* Animation Classes */
+  .fade-enter {
+    opacity: 0;
+  }
+
+  .fade-enter-active {
+    opacity: 1;
+    transition: opacity 200ms ease-in;
+  }
+
+  .fade-exit {
+    opacity: 1;
+  }
+
+  .fade-exit-active {
+    opacity: 0;
+    transition: opacity 200ms ease-in;
+  }
+
+  .slide-up-enter {
+    transform: translateY(100%);
+  }
+
+  .slide-up-enter-active {
+    transform: translateY(0);
+    transition: transform 300ms ease-out;
+  }
+
+  .slide-up-exit {
+    transform: translateY(0);
+  }
+
+  .slide-up-exit-active {
+    transform: translateY(100%);
+    transition: transform 300ms ease-out;
   }
 `;
 
