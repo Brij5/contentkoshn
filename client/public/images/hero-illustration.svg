@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800" height="600" viewBox="0 0 800 600" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Shape -->
+  <rect width="800" height="600" fill="#F8F9FA"/>
+  
+  <!-- Decorative Elements -->
+  <circle cx="400" cy="300" r="200" fill="#E3F2FD"/>
+  <circle cx="400" cy="300" r="150" fill="#BBDEFB"/>
+  
+  <!-- Content Blocks -->
+  <rect x="250" y="200" width="300" height="40" rx="8" fill="#2196F3"/>
+  <rect x="250" y="260" width="200" height="40" rx="8" fill="#64B5F6"/>
+  <rect x="250" y="320" width="250" height="40" rx="8" fill="#90CAF9"/>
+  
+  <!-- Abstract Shapes -->
+  <circle cx="600" cy="150" r="30" fill="#1976D2"/>
+  <circle cx="200" cy="450" r="40" fill="#42A5F5"/>
+  <circle cx="650" cy="400" r="25" fill="#1E88E5"/>
+  
+  <!-- Lines -->
+  <path d="M 150 100 Q 400 50 650 100" stroke="#2196F3" stroke-width="4" fill="none"/>
+  <path d="M 150 500 Q 400 550 650 500" stroke="#2196F3" stroke-width="4" fill="none"/>
+</svg> 

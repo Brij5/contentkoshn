@@ -32,7 +32,7 @@ const Header = styled.div`
 `;
 
 const Title = styled.h1`
-  color: ${({ theme }) => theme.textColor};
+  color: #333;
   font-size: 2rem;
   font-weight: 700;
 `;
@@ -51,7 +51,7 @@ const SearchBar = styled.div`
     left: 1rem;
     top: 50%;
     transform: translateY(-50%);
-    color: ${({ theme }) => theme.textColorLight};
+    color: #666;
   }
 `;
 
@@ -60,7 +60,7 @@ const SearchInput = styled(Input)`
 `;
 
 const Table = styled.div`
-  background: ${({ theme }) => theme.cardBackground};
+  background: white;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   overflow: hidden;
@@ -70,12 +70,12 @@ const TableHeader = styled.div`
   display: grid;
   grid-template-columns: 1fr 1.5fr 1fr 1fr 1fr 120px;
   padding: 1rem 1.5rem;
-  background: ${({ theme }) => theme.backgroundSecondary};
-  border-bottom: 1px solid ${({ theme }) => theme.borderColor};
+  background: #f8f9fa;
+  border-bottom: 1px solid #eee;
   gap: 1rem;
 
   span {
-    color: ${({ theme }) => theme.textColorLight};
+    color: #666;
     font-weight: 600;
     font-size: 0.875rem;
   }
@@ -85,7 +85,7 @@ const TableRow = styled(motion.div)`
   display: grid;
   grid-template-columns: 1fr 1.5fr 1fr 1fr 1fr 120px;
   padding: 1rem 1.5rem;
-  border-bottom: 1px solid ${({ theme }) => theme.borderColor};
+  border-bottom: 1px solid #eee;
   align-items: center;
   gap: 1rem;
 
@@ -94,7 +94,7 @@ const TableRow = styled(motion.div)`
   }
 
   &:hover {
-    background: ${({ theme }) => theme.backgroundSecondary};
+    background: #f8f9fa;
   }
 `;
 
@@ -102,7 +102,7 @@ const UserName = styled.div`
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  color: ${({ theme }) => theme.textColor};
+  color: #333;
   font-weight: 500;
 `;
 
@@ -110,8 +110,8 @@ const UserAvatar = styled.div`
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: ${({ theme }) => theme.primaryColor}20;
-  color: ${({ theme }) => theme.primaryColor};
+  background: #2196F320;
+  color: #2196F3;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -120,7 +120,7 @@ const UserAvatar = styled.div`
 `;
 
 const UserEmail = styled.div`
-  color: ${({ theme }) => theme.textColorLight};
+  color: #666;
   font-size: 0.875rem;
 `;
 
@@ -133,22 +133,22 @@ const Status = styled.span`
   align-items: center;
   gap: 0.25rem;
 
-  ${({ status, theme }) => {
+  ${({ status }) => {
     switch (status) {
       case 'active':
         return `
-          background: ${theme.successColor}15;
-          color: ${theme.successColor};
+          background: #4CAF5015;
+          color: #4CAF50;
         `;
       case 'inactive':
         return `
-          background: ${theme.errorColor}15;
-          color: ${theme.errorColor};
+          background: #F4433615;
+          color: #F44336;
         `;
       default:
         return `
-          background: ${theme.textColorLight}15;
-          color: ${theme.textColorLight};
+          background: #66666615;
+          color: #666666;
         `;
     }
   }}
@@ -162,15 +162,15 @@ const Actions = styled.div`
 const IconButton = styled.button`
   background: none;
   border: none;
-  color: ${({ theme }) => theme.textColorLight};
+  color: #666;
   padding: 0.5rem;
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s ease;
 
   &:hover {
-    background: ${({ theme }) => theme.backgroundSecondary};
-    color: ${({ theme }) => theme.textColor};
+    background: #f8f9fa;
+    color: #333;
   }
 `;
 
@@ -187,7 +187,7 @@ const FormGroup = styled.div`
 `;
 
 const Label = styled.label`
-  color: ${({ theme }) => theme.textColor};
+  color: #333;
   font-weight: 500;
 `;
 
@@ -203,13 +203,13 @@ const DeleteConfirmation = styled.div`
   padding: 1rem;
 
   svg {
-    color: ${({ theme }) => theme.errorColor};
+    color: #F44336;
     font-size: 3rem;
     margin-bottom: 1rem;
   }
 
   p {
-    color: ${({ theme }) => theme.textColorLight};
+    color: #666;
     margin-bottom: 2rem;
   }
 `;

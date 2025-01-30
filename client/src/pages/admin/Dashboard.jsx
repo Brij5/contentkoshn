@@ -23,7 +23,7 @@ const Header = styled.div`
 `;
 
 const Title = styled.h1`
-  color: ${({ theme }) => theme.textColor};
+  color: #333;
   font-size: 2rem;
   font-weight: 700;
 `;
@@ -35,7 +35,7 @@ const StatsGrid = styled.div`
 `;
 
 const StatCard = styled(motion.div)`
-  background: ${({ theme }) => theme.cardBackground};
+  background: white;
   padding: 1.5rem;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
@@ -52,7 +52,7 @@ const IconWrapper = styled.div`
   align-items: center;
   justify-content: center;
   font-size: 1.5rem;
-  background: ${({ theme, color }) => color}15;
+  background: ${({ color }) => `${color}15`};
   color: ${({ color }) => color};
 `;
 
@@ -63,12 +63,12 @@ const StatInfo = styled.div`
 const StatValue = styled.div`
   font-size: 1.5rem;
   font-weight: 700;
-  color: ${({ theme }) => theme.textColor};
+  color: #333;
   margin-bottom: 0.25rem;
 `;
 
 const StatLabel = styled.div`
-  color: ${({ theme }) => theme.textColorLight};
+  color: #666;
   font-size: 0.875rem;
 `;
 
@@ -84,13 +84,13 @@ const SectionHeader = styled.div`
 `;
 
 const SectionTitle = styled.h2`
-  color: ${({ theme }) => theme.textColor};
+  color: #333;
   font-size: 1.25rem;
   font-weight: 600;
 `;
 
 const ActivityList = styled.div`
-  background: ${({ theme }) => theme.cardBackground};
+  background: white;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   overflow: hidden;
@@ -101,7 +101,7 @@ const ActivityItem = styled.div`
   align-items: center;
   gap: 1rem;
   padding: 1rem 1.5rem;
-  border-bottom: 1px solid ${({ theme }) => theme.borderColor};
+  border-bottom: 1px solid #eee;
 
   &:last-child {
     border-bottom: none;
@@ -115,24 +115,24 @@ const ActivityIcon = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  background: ${({ theme, type }) => {
+  background: ${({ type }) => {
     switch (type) {
       case 'user':
-        return theme.primaryColor + '15';
+        return '#2196F315';
       case 'content':
-        return theme.successColor + '15';
+        return '#4CAF5015';
       default:
-        return theme.textColorLight + '15';
+        return '#66666615';
     }
   }};
-  color: ${({ theme, type }) => {
+  color: ${({ type }) => {
     switch (type) {
       case 'user':
-        return theme.primaryColor;
+        return '#2196F3';
       case 'content':
-        return theme.successColor;
+        return '#4CAF50';
       default:
-        return theme.textColorLight;
+        return '#666666';
     }
   }};
 `;
@@ -142,7 +142,7 @@ const ActivityContent = styled.div`
 `;
 
 const ActivityText = styled.div`
-  color: ${({ theme }) => theme.textColor};
+  color: #333;
   font-size: 0.875rem;
   margin-bottom: 0.25rem;
 
@@ -152,7 +152,7 @@ const ActivityText = styled.div`
 `;
 
 const ActivityTime = styled.div`
-  color: ${({ theme }) => theme.textColorLight};
+  color: #666;
   font-size: 0.75rem;
   display: flex;
   align-items: center;
@@ -221,6 +221,7 @@ const Dashboard = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.1 }}
+            whileHover={{ y: -5 }}
           >
             <IconWrapper color={stat.color}>
               {stat.icon}
@@ -240,7 +241,13 @@ const Dashboard = () => {
 
         <ActivityList>
           {recentActivity.map((activity, index) => (
-            <ActivityItem key={index}>
+            <ActivityItem
+              key={index}
+              as={motion.div}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: index * 0.1 }}
+            >
               <ActivityIcon type={activity.type}>
                 {activity.icon}
               </ActivityIcon>

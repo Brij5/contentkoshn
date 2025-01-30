@@ -1,79 +1,65 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import { FiClock, FiUser, FiArrowRight } from 'react-icons/fi';
 
-const SectionContainer = styled.section`
+const Section = styled.section`
   padding: 6rem 2rem;
-  background: ${({ theme }) => theme.backgroundPrimary};
-
-  @media (max-width: 768px) {
-    padding: 4rem 1rem;
-  }
+  background: #f8f9fa;
 `;
 
-const SectionContent = styled.div`
+const Container = styled.div`
   max-width: 1200px;
   margin: 0 auto;
 `;
 
-const SectionHeader = styled.div`
+const Header = styled.div`
   text-align: center;
   margin-bottom: 4rem;
 `;
 
 const Title = styled(motion.h2)`
   font-size: 2.5rem;
-  color: ${({ theme }) => theme.textColor};
+  color: #333;
   margin-bottom: 1rem;
-  font-weight: 700;
 
   span {
-    color: ${({ theme }) => theme.primaryColor};
-  }
-
-  @media (max-width: 768px) {
-    font-size: 2rem;
+    color: #2196F3;
   }
 `;
 
 const Description = styled(motion.p)`
   font-size: 1.1rem;
-  color: ${({ theme }) => theme.textColorLight};
+  color: #666;
   max-width: 600px;
   margin: 0 auto;
   line-height: 1.6;
 `;
 
-const BlogGrid = styled(motion.div)`
+const Grid = styled(motion.div)`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 2rem;
   margin-top: 2rem;
-
-  @media (max-width: 640px) {
-    grid-template-columns: 1fr;
-  }
 `;
 
 const BlogCard = styled(motion.article)`
-  background: ${({ theme }) => theme.backgroundSecondary};
+  background: white;
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
-  cursor: pointer;
 
   &:hover {
     transform: translateY(-4px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
 
     img {
       transform: scale(1.05);
     }
 
     .read-more {
-      color: ${({ theme }) => theme.primaryColor};
+      color: #2196F3;
       gap: 0.75rem;
     }
   }
@@ -98,9 +84,8 @@ const Content = styled.div`
 
 const BlogTitle = styled.h3`
   font-size: 1.25rem;
-  color: ${({ theme }) => theme.textColor};
+  color: #333;
   margin-bottom: 0.75rem;
-  font-weight: 600;
   line-height: 1.4;
 `;
 
@@ -110,23 +95,18 @@ const BlogMeta = styled.div`
   gap: 1rem;
   margin-bottom: 1rem;
   font-size: 0.9rem;
-  color: ${({ theme }) => theme.textColorLight};
+  color: #666;
 `;
 
 const MetaItem = styled.span`
   display: flex;
   align-items: center;
   gap: 0.5rem;
-
-  svg {
-    width: 16px;
-    height: 16px;
-  }
 `;
 
 const BlogExcerpt = styled.p`
   font-size: 1rem;
-  color: ${({ theme }) => theme.textColorLight};
+  color: #666;
   line-height: 1.6;
   margin-bottom: 1.5rem;
   display: -webkit-box;
@@ -141,14 +121,14 @@ const ReadMore = styled.div`
   gap: 0.5rem;
   font-size: 0.9rem;
   font-weight: 500;
-  color: ${({ theme }) => theme.textColor};
+  color: #333;
   transition: all 0.3s ease;
 `;
 
-const LoadMoreButton = styled(motion.button)`
+const LoadMore = styled(motion.button)`
   background: transparent;
-  color: ${({ theme }) => theme.primaryColor};
-  border: 2px solid ${({ theme }) => theme.primaryColor};
+  color: #2196F3;
+  border: 2px solid #2196F3;
   padding: 0.75rem 2rem;
   border-radius: 8px;
   font-size: 1rem;
@@ -159,95 +139,64 @@ const LoadMoreButton = styled(motion.button)`
   transition: all 0.3s ease;
 
   &:hover {
-    background: ${({ theme }) => theme.primaryColor}10;
+    background: #2196F310;
     transform: translateY(-2px);
-  }
-
-  &:active {
-    transform: translateY(0);
   }
 `;
 
-const sampleBlogs = [
+const blogs = [
   {
     id: 1,
-    title: 'How AI is Revolutionizing Content Creation',
-    excerpt: 'Discover how artificial intelligence is transforming the way we create and manage content in the digital age.',
+    title: 'The Future of Content Management Systems',
+    excerpt: 'Explore the upcoming trends and innovations that will shape the future of content management systems.',
     author: 'Sarah Johnson',
-    date: '2024-01-15',
     readTime: '5 min read',
-    image: '/assets/blog-1.jpg'
+    image: '/images/blog-1.svg'
   },
   {
     id: 2,
-    title: 'Best Practices for Content Organization',
-    excerpt: 'Learn the most effective strategies for organizing and managing your content library for maximum efficiency.',
+    title: 'Optimizing Content for Better Engagement',
+    excerpt: 'Learn effective strategies to optimize your content and increase user engagement across platforms.',
     author: 'Michael Chen',
-    date: '2024-01-12',
     readTime: '4 min read',
-    image: '/assets/blog-2.jpg'
+    image: '/images/blog-2.svg'
   },
   {
     id: 3,
-    title: 'The Future of Content Management Systems',
-    excerpt: 'Explore the upcoming trends and innovations that will shape the future of content management systems.',
+    title: 'AI-Powered Content Creation Tools',
+    excerpt: 'Discover how artificial intelligence is revolutionizing the way we create and manage content.',
     author: 'Emily Davis',
-    date: '2024-01-10',
     readTime: '6 min read',
-    image: '/assets/blog-3.jpg'
+    image: '/images/blog-3.svg'
   }
 ];
 
-const BlogsSection = () => {
-  const [blogs, setBlogs] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    // Simulate API call
-    setTimeout(() => {
-      setBlogs(sampleBlogs);
-      setLoading(false);
-    }, 1000);
-  }, []);
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        duration: 0.5,
-        staggerChildren: 0.1
-      }
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1
     }
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.5
-      }
-    }
-  };
-
-  if (loading) {
-    return (
-      <SectionContainer>
-        <SectionContent>
-          <SectionHeader>
-            <Title>Loading blogs...</Title>
-          </SectionHeader>
-        </SectionContent>
-      </SectionContainer>
-    );
   }
+};
 
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.5
+    }
+  }
+};
+
+const BlogsSection = () => {
   return (
-    <SectionContainer>
-      <SectionContent>
-        <SectionHeader>
+    <Section>
+      <Container>
+        <Header>
           <Title
             variants={itemVariants}
             initial="hidden"
@@ -264,9 +213,9 @@ const BlogsSection = () => {
           >
             Stay informed with our latest articles, tips, and industry insights.
           </Description>
-        </SectionHeader>
+        </Header>
 
-        <BlogGrid
+        <Grid
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
@@ -301,9 +250,9 @@ const BlogsSection = () => {
               </Content>
             </BlogCard>
           ))}
-        </BlogGrid>
+        </Grid>
 
-        <LoadMoreButton
+        <LoadMore
           variants={itemVariants}
           initial="hidden"
           whileInView="visible"
@@ -312,9 +261,9 @@ const BlogsSection = () => {
           whileTap={{ scale: 0.95 }}
         >
           Load More Articles
-        </LoadMoreButton>
-      </SectionContent>
-    </SectionContainer>
+        </LoadMore>
+      </Container>
+    </Section>
   );
 };
 

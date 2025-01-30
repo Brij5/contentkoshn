@@ -2,192 +2,166 @@ import React from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import { FiArrowRight } from 'react-icons/fi';
 
-const HeroContainer = styled.section`
-  min-height: 90vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 4rem 2rem;
-  background: linear-gradient(135deg, #2196F3, #1976D2);
-  position: relative;
+const Section = styled.section`
+  padding: 6rem 2rem;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
   overflow: hidden;
+  position: relative;
+
   @media (max-width: 768px) {
-    padding: 2rem 1rem;
-    min-height: 80vh;
+    padding: 4rem 1rem;
   }
 `;
 
-const ContentWrapper = styled.div`
+const Container = styled.div`
   max-width: 1200px;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 4rem;
+  align-items: center;
+
   @media (max-width: 968px) {
-    flex-direction: column;
+    grid-template-columns: 1fr;
     text-align: center;
-    gap: 2rem;
   }
 `;
 
-const TextContent = styled.div`
-  flex: 1;
-  z-index: 1;
+const Content = styled.div`
+  @media (max-width: 968px) {
+    order: 2;
+  }
 `;
 
 const Title = styled(motion.h1)`
-  font-size: 4rem;
-  font-weight: 700;
-  color: white;
-  margin-bottom: 1.5rem;
+  font-size: 3.5rem;
+  color: #333;
   line-height: 1.2;
+  margin-bottom: 1.5rem;
+
   span {
-    color: #FFC107;
+    color: #2196F3;
   }
+
   @media (max-width: 768px) {
     font-size: 2.5rem;
   }
 `;
 
-const Subtitle = styled(motion.p)`
+const Description = styled(motion.p)`
   font-size: 1.25rem;
-  color: rgba(255, 255, 255, 0.9);
-  margin-bottom: 2rem;
+  color: #666;
   line-height: 1.6;
-  max-width: 600px;
-  @media (max-width: 768px) {
-    font-size: 1.1rem;
-    margin-left: auto;
-    margin-right: auto;
-  }
+  margin-bottom: 2rem;
 `;
 
-const ButtonGroup = styled.div`
+const ButtonGroup = styled(motion.div)`
   display: flex;
   gap: 1rem;
-  @media (max-width: 768px) {
+
+  @media (max-width: 968px) {
     justify-content: center;
   }
 `;
 
-const Button = styled(Link)`
+const PrimaryButton = styled(Link)`
   padding: 1rem 2rem;
-  border-radius: 4px;
+  background: #2196F3;
+  color: white;
+  border-radius: 8px;
   font-size: 1.1rem;
   font-weight: 500;
   text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
   transition: all 0.3s ease;
-  cursor: pointer;
 
-  &.primary {
-    background-color: #FFC107;
-    color: #333;
-    &:hover {
-      background-color: #FFB300;
-      transform: translateY(-2px);
-    }
-  }
-
-  &.secondary {
-    background-color: transparent;
-    color: white;
-    border: 2px solid white;
-    &:hover {
-      background-color: rgba(255, 255, 255, 0.1);
-      transform: translateY(-2px);
-    }
+  &:hover {
+    background: #1976D2;
+    transform: translateY(-2px);
   }
 `;
 
-const BackgroundShape = styled(motion.div)`
-  position: absolute;
-  width: 500px;
-  height: 500px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.1);
-  filter: blur(80px);
-  z-index: 0;
-  &.shape1 {
-    top: -100px;
-    right: -100px;
+const SecondaryButton = styled(Link)`
+  padding: 1rem 2rem;
+  background: transparent;
+  color: #2196F3;
+  border: 2px solid #2196F3;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 500;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: #2196F310;
+    transform: translateY(-2px);
   }
-  &.shape2 {
-    bottom: -100px;
-    left: -100px;
-    background: rgba(255, 255, 255, 0.05);
+`;
+
+const ImageContainer = styled(motion.div)`
+  position: relative;
+
+  img {
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+  }
+
+  @media (max-width: 968px) {
+    order: 1;
+    max-width: 500px;
+    margin: 0 auto;
   }
 `;
 
 const HeroSection = () => {
   return (
-    <HeroContainer>
-      <BackgroundShape 
-        className="shape1"
-        animate={{
-          scale: [1, 1.2, 1],
-          rotate: [0, 90, 0]
-        }}
-        transition={{
-          duration: 20,
-          repeat: Infinity,
-          repeatType: "reverse"
-        }}
-      />
-      <BackgroundShape 
-        className="shape2"
-        animate={{
-          scale: [1, 1.1, 1],
-          rotate: [0, -90, 0]
-        }}
-        transition={{
-          duration: 15,
-          repeat: Infinity,
-          repeatType: "reverse"
-        }}
-      />
-      <ContentWrapper>
-        <TextContent>
-          <Title
+    <Section>
+      <Container>
+        <Content>
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
+            transition={{ duration: 0.6 }}
           >
-            Transform Your <span>Content</span> Management
-          </Title>
-          <Subtitle
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-          >
-            Streamline your content workflow with our powerful platform. Create, manage, and distribute content effortlessly.
-          </Subtitle>
-          <ButtonGroup>
-            <Button 
-              to="/auth/register" 
-              className="primary"
-              as={motion.a}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.4 }}
-            >
-              Get Started
-            </Button>
-            <Button 
-              to="/about" 
-              className="secondary"
-              as={motion.a}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.6 }}
-            >
-              Learn More
-            </Button>
-          </ButtonGroup>
-        </TextContent>
-      </ContentWrapper>
-    </HeroContainer>
+            <Title>
+              Streamline Your <span>Content</span> Management
+            </Title>
+            <Description>
+              Create, manage, and deliver content effortlessly with our powerful platform.
+              Built for modern teams and businesses.
+            </Description>
+            <ButtonGroup>
+              <PrimaryButton to="/register">
+                Get Started <FiArrowRight />
+              </PrimaryButton>
+              <SecondaryButton to="/demo">
+                View Demo
+              </SecondaryButton>
+            </ButtonGroup>
+          </motion.div>
+        </Content>
+
+        <ImageContainer
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          <img 
+            src="/images/hero-illustration.svg" 
+            alt="ContentKosh Platform" 
+            loading="eager"
+          />
+        </ImageContainer>
+      </Container>
+    </Section>
   );
 };
 

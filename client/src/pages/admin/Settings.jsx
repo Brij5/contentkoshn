@@ -29,7 +29,7 @@ const Header = styled.div`
 `;
 
 const Title = styled.h1`
-  color: ${({ theme }) => theme.textColor};
+  color: #333;
   font-size: 2rem;
   font-weight: 700;
 `;
@@ -45,7 +45,7 @@ const SettingsLayout = styled.div`
 `;
 
 const Sidebar = styled.div`
-  background: ${({ theme }) => theme.cardBackground};
+  background: white;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   overflow: hidden;
@@ -60,14 +60,14 @@ const NavItem = styled.button`
   padding: 1rem 1.5rem;
   background: none;
   border: none;
-  color: ${({ theme, active }) => active ? theme.primaryColor : theme.textColor};
+  color: ${({ active }) => active ? '#2196F3' : '#333'};
   font-weight: ${({ active }) => active ? '600' : '500'};
   cursor: pointer;
   transition: all 0.2s ease;
   text-align: left;
 
   &:hover {
-    background: ${({ theme }) => theme.backgroundSecondary};
+    background: #f8f9fa;
   }
 
   svg:last-child {
@@ -77,7 +77,7 @@ const NavItem = styled.button`
 `;
 
 const Content = styled.div`
-  background: ${({ theme }) => theme.cardBackground};
+  background: white;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   padding: 2rem;
@@ -87,12 +87,12 @@ const Section = styled.div`
   &:not(:last-child) {
     margin-bottom: 2rem;
     padding-bottom: 2rem;
-    border-bottom: 1px solid ${({ theme }) => theme.borderColor};
+    border-bottom: 1px solid #eee;
   }
 `;
 
 const SectionTitle = styled.h2`
-  color: ${({ theme }) => theme.textColor};
+  color: #333;
   font-size: 1.25rem;
   font-weight: 600;
   margin-bottom: 1rem;
@@ -106,14 +106,40 @@ const FormGroup = styled.div`
 `;
 
 const Label = styled.label`
-  color: ${({ theme }) => theme.textColor};
+  color: #333;
   font-weight: 500;
 `;
 
 const Description = styled.p`
-  color: ${({ theme }) => theme.textColorLight};
+  color: #666;
   font-size: 0.875rem;
   margin-bottom: 0.5rem;
+`;
+
+const Checkbox = styled.input.attrs({ type: 'checkbox' })`
+  margin-right: 0.5rem;
+  cursor: pointer;
+`;
+
+const SaveButton = styled(Button)`
+  background: #2196F3;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background: #1976D2;
+  }
+
+  &:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+  }
 `;
 
 const Settings = () => {
@@ -143,6 +169,14 @@ const Settings = () => {
     // Implement save functionality
     console.log('Save settings:', settings);
   };
+
+  const sections = [
+    { id: 'general', icon: <FiSettings />, label: 'General' },
+    { id: 'email', icon: <FiMail />, label: 'Email' },
+    { id: 'notifications', icon: <FiBell />, label: 'Notifications' },
+    { id: 'users', icon: <FiUsers />, label: 'Users' },
+    { id: 'security', icon: <FiLock />, label: 'Security' }
+  ];
 
   const renderContent = () => {
     switch (activeSection) {
@@ -296,46 +330,25 @@ const Settings = () => {
     <Container>
       <Header>
         <Title>Settings</Title>
-        <Button onClick={handleSave}>
+        <SaveButton onClick={handleSave}>
           <FiSave />
           Save Changes
-        </Button>
+        </SaveButton>
       </Header>
 
       <SettingsLayout>
         <Sidebar>
-          <NavItem
-            active={activeSection === 'general'}
-            onClick={() => setActiveSection('general')}
-          >
-            <FiSettings />
-            General
-            <FiChevronRight />
-          </NavItem>
-          <NavItem
-            active={activeSection === 'email'}
-            onClick={() => setActiveSection('email')}
-          >
-            <FiMail />
-            Email
-            <FiChevronRight />
-          </NavItem>
-          <NavItem
-            active={activeSection === 'notifications'}
-            onClick={() => setActiveSection('notifications')}
-          >
-            <FiBell />
-            Notifications
-            <FiChevronRight />
-          </NavItem>
-          <NavItem
-            active={activeSection === 'users'}
-            onClick={() => setActiveSection('users')}
-          >
-            <FiUsers />
-            Users
-            <FiChevronRight />
-          </NavItem>
+          {sections.map(section => (
+            <NavItem
+              key={section.id}
+              active={activeSection === section.id}
+              onClick={() => setActiveSection(section.id)}
+            >
+              {section.icon}
+              {section.label}
+              <FiChevronRight />
+            </NavItem>
+          ))}
         </Sidebar>
 
         <Content>

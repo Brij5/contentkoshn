@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../../store/slices/authSlice';
+import { FiMenu, FiX } from 'react-icons/fi';
 
 const HeaderContainer = styled.header`
   background-color: #ffffff;
@@ -33,6 +34,18 @@ const NavLinks = styled.div`
   display: flex;
   gap: 2rem;
   align-items: center;
+
+  @media (max-width: 768px) {
+    display: ${({ isOpen }) => (isOpen ? 'flex' : 'none')};
+    position: fixed;
+    top: 70px;
+    left: 0;
+    right: 0;
+    background: white;
+    flex-direction: column;
+    padding: 2rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
 `;
 
 const NavLink = styled(Link)`
@@ -42,13 +55,18 @@ const NavLink = styled(Link)`
   transition: color 0.2s;
 
   &:hover {
-    color: #007bff;
+    color: #2196F3;
   }
 `;
 
 const AuthButtons = styled.div`
   display: flex;
   gap: 1rem;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    width: 100%;
+  }
 `;
 
 const Button = styled.button`
@@ -59,24 +77,41 @@ const Button = styled.button`
   transition: all 0.2s;
 
   &.primary {
-    background-color: #007bff;
+    background-color: #2196F3;
     color: white;
     border: none;
 
     &:hover {
-      background-color: #0056b3;
+      background-color: #1976D2;
     }
   }
 
   &.secondary {
     background-color: transparent;
-    color: #007bff;
-    border: 1px solid #007bff;
+    color: #2196F3;
+    border: 1px solid #2196F3;
 
     &:hover {
-      background-color: #007bff;
+      background-color: #2196F3;
       color: white;
     }
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
+  }
+`;
+
+const MenuButton = styled.button`
+  display: none;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #333;
+  cursor: pointer;
+
+  @media (max-width: 768px) {
+    display: block;
   }
 `;
 
@@ -84,44 +119,62 @@ const Header = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { isAuthenticated, user } = useSelector((state) => state.auth);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const handleLogout = () => {
     dispatch(logout());
     navigate('/');
+    setIsMenuOpen(false);
+  };
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
   };
 
   return (
     <HeaderContainer>
       <Nav>
         <Logo to="/">ContentKosh</Logo>
-        <NavLinks>
-          <NavLink to="/">Home</NavLink>
-          <NavLink to="/services">Services</NavLink>
-          <NavLink to="/about">About</NavLink>
-          <NavLink to="/contact">Contact</NavLink>
+        <MenuButton onClick={toggleMenu}>
+          {isMenuOpen ? <FiX /> : <FiMenu />}
+        </MenuButton>
+        <NavLinks isOpen={isMenuOpen}>
+          <NavLink to="/" onClick={() => setIsMenuOpen(false)}>Home</NavLink>
+          <NavLink to="/services" onClick={() => setIsMenuOpen(false)}>Services</NavLink>
+          <NavLink to="/about" onClick={() => setIsMenuOpen(false)}>About</NavLink>
+          <NavLink to="/contact" onClick={() => setIsMenuOpen(false)}>Contact</NavLink>
           {isAuthenticated && user?.role === 'admin' && (
-            <NavLink to="/admin/dashboard">Dashboard</NavLink>
+            <NavLink to="/admin" onClick={() => setIsMenuOpen(false)}>Admin</NavLink>
           )}
-        </NavLinks>
-        <AuthButtons>
-          {isAuthenticated ? (
-            <>
-              <NavLink to="/profile">Profile</NavLink>
+          <AuthButtons>
+            {isAuthenticated ? (
               <Button className="secondary" onClick={handleLogout}>
                 Logout
               </Button>
-            </>
-          ) : (
-            <>
-              <Button className="secondary" onClick={() => navigate('/auth/login')}>
-                Login
-              </Button>
-              <Button className="primary" onClick={() => navigate('/auth/register')}>
-                Sign Up
-              </Button>
-            </>
-          )}
-        </AuthButtons>
+            ) : (
+              <>
+                <Button
+                  className="secondary"
+                  onClick={() => {
+                    navigate('/auth/login');
+                    setIsMenuOpen(false);
+                  }}
+                >
+                  Login
+                </Button>
+                <Button
+                  className="primary"
+                  onClick={() => {
+                    navigate('/auth/register');
+                    setIsMenuOpen(false);
+                  }}
+                >
+                  Register
+                </Button>
+              </>
+            )}
+          </AuthButtons>
+        </NavLinks>
       </Nav>
     </HeaderContainer>
   );

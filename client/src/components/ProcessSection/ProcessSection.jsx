@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
+import { FiMessageSquare, FiTarget, FiEdit3, FiCheckCircle } from 'react-icons/fi';
 
 const Section = styled.section`
   padding: 6rem 2rem;
@@ -71,8 +72,9 @@ const StepNumber = styled(motion.div)`
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 `;
 
-const StepIcon = styled.i`
+const StepIcon = styled.div`
   font-size: 2rem;
+  color: white;
 `;
 
 const StepTitle = styled.h3`
@@ -88,56 +90,74 @@ const StepDescription = styled.p`
   margin: 0 auto;
 `;
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.3
+    }
+  }
+};
+
+const stepVariants = {
+  hidden: { 
+    opacity: 0,
+    y: 20
+  },
+  visible: { 
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.6,
+      ease: [0.43, 0.13, 0.23, 0.96]
+    }
+  }
+};
+
 const ProcessSection = () => {
   const steps = [
     {
-      icon: 'fas fa-comments',
+      icon: <FiMessageSquare />,
       title: 'Initial Consultation',
       description: 'We start with a detailed discussion to understand your content needs and goals.'
     },
     {
-      icon: 'fas fa-lightbulb',
+      icon: <FiTarget />,
       title: 'Strategy Development',
-      description: 'Our team creates a customized content strategy aligned with your objectives.'
+      description: 'We create a customized content strategy aligned with your business objectives.'
     },
     {
-      icon: 'fas fa-pen-fancy',
+      icon: <FiEdit3 />,
       title: 'Content Creation',
-      description: 'Expert writers craft engaging content that resonates with your target audience.'
+      description: 'Our team creates high-quality content following the approved strategy.'
     },
     {
-      icon: 'fas fa-check-circle',
-      title: 'Review & Delivery',
-      description: 'Quality checks and revisions ensure the content meets your expectations.'
+      icon: <FiCheckCircle />,
+      title: 'Review & Launch',
+      description: 'We review the content together and launch it to your target audience.'
     }
   ];
 
   return (
     <Section>
       <Container>
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
+        <Title>How It Works</Title>
+        <Description>
+          Our streamlined process ensures efficient content creation and management,
+          helping you achieve your goals faster.
+        </Description>
+        <ProcessSteps
+          as={motion.div}
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
         >
-          <Title>Our Process</Title>
-          <Description>
-            We follow a systematic approach to deliver high-quality content that drives results.
-          </Description>
-        </motion.div>
-        <ProcessSteps>
           {steps.map((step, index) => (
-            <ProcessStep
-              key={index}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: index * 0.2 }}
-            >
-              <StepNumber
-                whileHover={{ scale: 1.1 }}
-                transition={{ duration: 0.3 }}
-              >
-                <StepIcon className={step.icon} />
+            <ProcessStep key={index} variants={stepVariants}>
+              <StepNumber>
+                <StepIcon>{step.icon}</StepIcon>
               </StepNumber>
               <StepTitle>{step.title}</StepTitle>
               <StepDescription>{step.description}</StepDescription>
