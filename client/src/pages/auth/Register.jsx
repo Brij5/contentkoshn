@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { registerUser, clearAuthError } from '../../store/actions/authActions';
+import { registerUser, clearError } from '../../store/actions/authActions';
 import { selectAuthLoading, selectAuthError, selectIsAuthenticated } from '../../store/slices/authSlice';
 
 // Reuse styled components from Login
@@ -41,7 +41,7 @@ const Label = styled.label`
 
 const Input = styled.input`
   padding: 0.8rem;
-  border: 2px solid ${({ theme, error }) => error ? theme.errorColor : theme.borderColor};
+  border: 2px solid ${({ theme }) => theme.borderColor};
   border-radius: 4px;
   background: ${({ theme }) => theme.inputBackground};
   color: ${({ theme }) => theme.textColor};
@@ -52,6 +52,10 @@ const Input = styled.input`
     outline: none;
     border-color: ${({ theme }) => theme.primaryColor};
   }
+
+  ${props => props['aria-invalid'] && `
+    border-color: ${props.theme.errorColor};
+  `}
 `;
 
 const Button = styled.button`
@@ -107,7 +111,7 @@ const Register = () => {
   const [formErrors, setFormErrors] = useState({});
 
   useEffect(() => {
-    dispatch(clearAuthError());
+    dispatch(clearError());
   }, [dispatch]);
 
   useEffect(() => {

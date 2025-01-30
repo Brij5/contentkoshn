@@ -1,5 +1,18 @@
 {
+  "name": "contentkosh",
+  "version": "1.0.0",
+  "description": "Content Management System",
+  "scripts": {
+    "start": "cd client && npm start",
+    "install:client": "cd client && npm install",
+    "install:server": "cd server && npm install",
+    "install:all": "npm install && npm run install:client && npm run install:server",
+    "dev:client": "cd client && npm start",
+    "dev:server": "cd server && npm run dev",
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\""
+  },
   "devDependencies": {
+    "concurrently": "^8.2.2",
     "css-what": "^6.1.0",
     "glob": "^9.3.5",
     "react-scripts": "^4.0.1",

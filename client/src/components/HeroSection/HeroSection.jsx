@@ -1,150 +1,112 @@
 import React from 'react';
-import styled from 'styled-components';
-import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import { FiArrowRight } from 'react-icons/fi';
+import {
+  Section,
+  Container,
+  Content,
+  Title,
+  Description,
+  ButtonGroup,
+  StyledButton,
+  ImageWrapper,
+  Image,
+  Shapes,
+  Shape
+} from './HeroSection.styled';
 
-const Section = styled.section`
-  min-height: calc(100vh - 80px);
-  display: flex;
-  align-items: center;
-  padding: 2rem;
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-`;
-
-const Container = styled.div`
-  max-width: 1200px;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 4rem;
-  align-items: center;
-
-  @media (max-width: 968px) {
-    grid-template-columns: 1fr;
-    text-align: center;
-  }
-`;
-
-const Content = styled.div`
-  @media (max-width: 968px) {
-    order: 2;
-  }
-`;
-
-const Title = styled(motion.h1)`
-  font-size: 3.5rem;
-  color: #333;
-  margin-bottom: 1.5rem;
-  line-height: 1.2;
-
-  @media (max-width: 768px) {
-    font-size: 2.5rem;
-  }
-`;
-
-const Description = styled(motion.p)`
-  font-size: 1.25rem;
-  color: #666;
-  margin-bottom: 2rem;
-  line-height: 1.6;
-`;
-
-const ButtonGroup = styled(motion.div)`
-  display: flex;
-  gap: 1rem;
-
-  @media (max-width: 968px) {
-    justify-content: center;
-  }
-`;
-
-const Button = styled(Link)`
-  padding: 1rem 2rem;
-  border-radius: 4px;
-  font-size: 1.1rem;
-  font-weight: 500;
-  text-decoration: none;
-  transition: all 0.3s ease;
-
-  &.primary {
-    background-color: #2196F3;
-    color: white;
-    border: none;
-
-    &:hover {
-      background-color: #1976D2;
+const titleVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: {
+      duration: 0.8,
+      ease: [0.43, 0.13, 0.23, 0.96]
     }
   }
+};
 
-  &.secondary {
-    background-color: transparent;
-    color: #2196F3;
-    border: 2px solid #2196F3;
-
-    &:hover {
-      background-color: #2196F3;
-      color: white;
+const descriptionVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: {
+      duration: 0.8,
+      delay: 0.2,
+      ease: [0.43, 0.13, 0.23, 0.96]
     }
   }
-`;
+};
 
-const ImageWrapper = styled(motion.div)`
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  @media (max-width: 968px) {
-    order: 1;
+const buttonVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: {
+      duration: 0.8,
+      delay: 0.4,
+      ease: [0.43, 0.13, 0.23, 0.96]
+    }
   }
-`;
+};
 
-const Image = styled.img`
-  width: 100%;
-  max-width: 500px;
-  height: auto;
-`;
+const imageVariants = {
+  hidden: { opacity: 0, scale: 0.8 },
+  visible: { 
+    opacity: 1, 
+    scale: 1,
+    transition: {
+      duration: 1,
+      ease: [0.43, 0.13, 0.23, 0.96]
+    }
+  }
+};
 
 const HeroSection = () => {
   return (
     <Section>
+      <Shapes>
+        <Shape data-shape="1" />
+        <Shape data-shape="2" />
+      </Shapes>
       <Container>
         <Content>
           <Title
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
+            variants={titleVariants}
+            initial="hidden"
+            animate="visible"
           >
-            Manage Your Content with Ease
+            Transform Your <span>Content</span> Management
           </Title>
           <Description
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
+            variants={descriptionVariants}
+            initial="hidden"
+            animate="visible"
           >
-            A powerful content management system that helps you create, organize,
-            and publish content efficiently across multiple platforms.
+            Streamline your content workflow with our powerful platform. Create, manage,
+            and publish content effortlessly across all your digital channels.
           </Description>
           <ButtonGroup
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
+            variants={buttonVariants}
+            initial="hidden"
+            animate="visible"
           >
-            <Button to="/auth/register" className="primary">
-              Get Started
-            </Button>
-            <Button to="/about" className="secondary">
-              Learn More
-            </Button>
+            <StyledButton to="/signup" data-variant="primary">
+              Get Started <FiArrowRight />
+            </StyledButton>
+            <StyledButton to="/about" data-variant="secondary">
+              Learn More <FiArrowRight />
+            </StyledButton>
           </ButtonGroup>
         </Content>
         <ImageWrapper
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5 }}
+          variants={imageVariants}
+          initial="hidden"
+          animate="visible"
         >
-          <Image src="/images/hero-illustration.svg" alt="Content Management" />
+          <Image src="/images/hero-illustration.svg" alt="Content Management Platform" />
         </ImageWrapper>
       </Container>
     </Section>

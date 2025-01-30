@@ -3,13 +3,23 @@ import styled from 'styled-components';
 import ErrorBoundary from '../../components/ErrorBoundary';
 import HeroSection from '../../components/HeroSection/HeroSection';
 import FeaturesSection from './sections/FeaturesSection';
+import ServicesSection from '../../components/ServicesSection/ServicesSection';
+import ProcessSection from '../../components/ProcessSection/ProcessSection';
+import TestimonialsSection from '../../components/TestimonialsSection/TestimonialsSection';
+import PricingSection from '../../components/PricingSection/PricingSection';
+import AboutSection from '../../components/AboutSection/AboutSection';
+import ContactSection from '../../components/ContactSection/ContactSection';
 
 const BlogsSection = React.lazy(() => import('../../components/BlogsSection/BlogsSection'));
 
 const Container = styled.div`
+  width: 100%;
+`;
+
+const Section = styled.section`
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 1rem;
+  padding: 4rem 1rem;
 `;
 
 const LoadingFallback = styled.div`
@@ -57,38 +67,59 @@ const SectionErrorFallback = ({ error, resetErrorBoundary }) => (
 const Home = () => {
   return (
     <Container>
-      <ErrorBoundary 
-        FallbackComponent={SectionErrorFallback}
-        onReset={() => {
-          // Additional reset logic if needed
-        }}
-      >
+      <ErrorBoundary FallbackComponent={SectionErrorFallback}>
         <HeroSection />
       </ErrorBoundary>
 
-      <ErrorBoundary 
-        FallbackComponent={SectionErrorFallback}
-        onReset={() => {
-          // Additional reset logic if needed
-        }}
-      >
-        <FeaturesSection />
-      </ErrorBoundary>
+      <Section>
+        <ErrorBoundary FallbackComponent={SectionErrorFallback}>
+          <AboutSection />
+        </ErrorBoundary>
+      </Section>
 
-      <ErrorBoundary 
-        FallbackComponent={SectionErrorFallback}
-        onReset={() => {
-          // Additional reset logic if needed
-        }}
-      >
-        <Suspense fallback={
-          <LoadingFallback>
-            Loading blog posts...
-          </LoadingFallback>
-        }>
-          <BlogsSection />
-        </Suspense>
-      </ErrorBoundary>
+      <Section>
+        <ErrorBoundary FallbackComponent={SectionErrorFallback}>
+          <FeaturesSection />
+        </ErrorBoundary>
+      </Section>
+
+      <Section>
+        <ErrorBoundary FallbackComponent={SectionErrorFallback}>
+          <ServicesSection />
+        </ErrorBoundary>
+      </Section>
+
+      <Section>
+        <ErrorBoundary FallbackComponent={SectionErrorFallback}>
+          <ProcessSection />
+        </ErrorBoundary>
+      </Section>
+
+      <Section>
+        <ErrorBoundary FallbackComponent={SectionErrorFallback}>
+          <PricingSection />
+        </ErrorBoundary>
+      </Section>
+
+      <Section>
+        <ErrorBoundary FallbackComponent={SectionErrorFallback}>
+          <TestimonialsSection />
+        </ErrorBoundary>
+      </Section>
+
+      <Section>
+        <ErrorBoundary FallbackComponent={SectionErrorFallback}>
+          <Suspense fallback={<LoadingFallback>Loading blog posts...</LoadingFallback>}>
+            <BlogsSection />
+          </Suspense>
+        </ErrorBoundary>
+      </Section>
+
+      <Section>
+        <ErrorBoundary FallbackComponent={SectionErrorFallback}>
+          <ContactSection />
+        </ErrorBoundary>
+      </Section>
     </Container>
   );
 };

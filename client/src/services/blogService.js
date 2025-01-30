@@ -1,8 +1,18 @@
 import ApiService from './apiService';
+import axios from 'axios';
+
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5001/api';
+const axiosInstance = axios.create({
+  baseURL: API_URL,
+  headers: {
+    'Content-Type': 'application/json'
+  }
+});
 
 class BlogService extends ApiService {
   constructor() {
     super('/blogs');
+    this.axiosInstance = axiosInstance;
   }
 
   async getPublishedPosts(params = {}) {
@@ -116,4 +126,12 @@ class BlogService extends ApiService {
   }
 }
 
-export default new BlogService();
+const blogService = new BlogService();
+
+export const getBlogs = (params) => blogService.getAll(params);
+export const getBlog = (id) => blogService.getById(id);
+export const createBlog = (data) => blogService.create(data);
+export const updateBlog = (id, data) => blogService.update(id, data);
+export const deleteBlog = (id) => blogService.delete(id);
+
+export default blogService;

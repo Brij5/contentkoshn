@@ -1,81 +1,106 @@
 import styled from 'styled-components';
+import { motion } from 'framer-motion';
 
-export const StyledAboutSection = styled.section`
-  padding: 8rem 0;
-  background-color: ${({ theme }) => theme.backgroundColor};
+export const Section = styled.section`
+  padding: 6rem 2rem;
+  background: ${({ theme }) => theme.background};
 `;
 
-export const StyledAboutTitle = styled.h2`
+export const Container = styled.div`
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: center;
+
+  @media (max-width: 968px) {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+`;
+
+export const Content = styled.div`
+  @media (max-width: 968px) {
+    order: 2;
+  }
+`;
+
+export const Title = styled(motion.h2)`
   font-size: 2.5rem;
-  font-weight: bold;
-  text-align: center;
+  color: ${({ theme }) => theme.text};
+  margin-bottom: 1.5rem;
+  line-height: 1.2;
+  font-weight: 700;
+
+  span {
+    color: ${({ theme }) => theme.primary};
+  }
+`;
+
+export const Description = styled(motion.p)`
+  color: ${({ theme }) => theme.textSecondary};
+  font-size: 1.1rem;
+  line-height: 1.6;
   margin-bottom: 2rem;
 `;
 
-export const StyledTeamGrid = styled.div`
+export const Stats = styled(motion.div)`
   display: grid;
-  grid-template-columns: repeat(1, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 2rem;
+  margin-top: 3rem;
 
-  @media (min-width: 768px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  @media (min-width: 1024px) {
-    grid-template-columns: repeat(4, 1fr);
+  @media (max-width: 968px) {
+    justify-items: center;
   }
 `;
 
-export const StyledTeamMemberCard = styled.div`
-  background-color: ${({ theme }) => theme.cardBackgroundColor};
-  border-radius: 0.5rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  padding: 1.5rem;
-  transition:
-    box-shadow 0.3s ease,
-    transform 0.3s ease;
-
-  &:hover {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    transform: scale(1.02);
-  }
+export const StatItem = styled(motion.div)`
+  text-align: center;
 `;
 
-export const StyledTeamMemberImage = styled.img`
-  border-radius: 50%;
-  width: 80px;
-  height: 80px;
-  margin: 0 auto 1rem;
-  display: block;
-`;
-
-export const StyledTeamMemberName = styled.h3`
+export const StatIcon = styled.div`
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  background: ${({ theme }) => theme.primary}15;
+  color: ${({ theme }) => theme.primary};
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-size: 1.5rem;
-  font-weight: bold;
-  text-align: center;
+  margin: 0 auto 1rem;
+`;
+
+export const StatNumber = styled.h3`
+  font-size: 2rem;
+  color: ${({ theme }) => theme.text};
   margin-bottom: 0.5rem;
+  font-weight: 700;
 `;
 
-export const StyledTeamMemberRole = styled.p`
+export const StatLabel = styled.p`
+  color: ${({ theme }) => theme.textSecondary};
   font-size: 1rem;
-  text-align: center;
-  color: ${({ theme }) => (theme.textColor === 'white' ? '#9ca3af' : '#6b7280')};
-  margin-bottom: 1rem;
 `;
 
-export const StyledTeamMemberEducation = styled.p`
-  font-size: 0.9rem;
-  text-align: center;
-  color: ${({ theme }) => (theme.textColor === 'white' ? '#9ca3af' : '#6b7280')};
-`;
+export const ImageWrapper = styled(motion.div)`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
-export const StyledTeamMemberLinkedin = styled.a`
-  display: block;
-  text-align: center;
-  color: ${({ theme }) => theme.primaryColor};
-  text-decoration: none;
-
-  &:hover {
-    text-decoration: underline;
+  @media (max-width: 968px) {
+    order: 1;
   }
+`;
+
+export const Image = styled.img`
+  width: 100%;
+  max-width: 500px;
+  height: auto;
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
 `;

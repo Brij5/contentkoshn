@@ -1,17 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg width="800" height="400" viewBox="0 0 800 400" fill="none" xmlns="http://www.w3.org/2000/svg">
   <!-- Background -->
-  <rect width="800" height="400" fill="#E8F5E9"/>
+  <rect width="800" height="400" fill="#EDE7F6"/>
   
   <!-- Decorative Elements -->
-  <circle cx="400" cy="200" r="100" fill="#C8E6C9"/>
-  <circle cx="400" cy="200" r="50" fill="#4CAF50"/>
+  <circle cx="400" cy="200" r="100" fill="#D1C4E9"/>
+  <circle cx="400" cy="200" r="50" fill="#673AB7"/>
   
   <!-- Abstract Shapes -->
-  <rect x="200" y="150" width="400" height="30" rx="4" fill="#388E3C"/>
-  <rect x="250" y="200" width="300" height="30" rx="4" fill="#81C784"/>
+  <rect x="200" y="150" width="400" height="30" rx="4" fill="#512DA8"/>
+  <rect x="250" y="200" width="300" height="30" rx="4" fill="#9575CD"/>
   
   <!-- Icons -->
-  <circle cx="600" cy="100" r="20" fill="#66BB6A"/>
-  <circle cx="200" cy="300" r="25" fill="#A5D6A7"/>
+  <circle cx="600" cy="100" r="20" fill="#7E57C2"/>
+  <circle cx="200" cy="300" r="25" fill="#B39DDB"/>
+  
+  <!-- Additional Decorative Lines -->
+  <path d="M 100 50 Q 200 100 300 50" stroke="#673AB7" stroke-width="3" fill="none"/>
+  <path d="M 500 350 Q 600 300 700 350" stroke="#673AB7" stroke-width="3" fill="none"/>
 </svg> 
