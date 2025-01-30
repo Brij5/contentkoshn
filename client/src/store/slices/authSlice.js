@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { handleApiError } from '../../utils/errorHandler';
+import { registerUser, loginUser, logoutUser } from '../actions/authActions';
 
 const initialState = {
   isAuthenticated: false,
@@ -31,16 +31,51 @@ const authSlice = createSlice({
       state.user = action.payload;
       state.isAuthenticated = true;
     },
-    setError: (state, action) => {
-      state.error = action.payload;
-      state.loading = false;
-    },
     clearError: (state) => {
       state.error = null;
     },
-    setLoading: (state, action) => {
-      state.loading = action.payload;
-    },
+  },
+  extraReducers: (builder) => {
+    // Register
+    builder
+      .addCase(registerUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(registerUser.fulfilled, (state) => {
+        state.loading = false;
+        state.error = null;
+      })
+      .addCase(registerUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      // Login
+      .addCase(loginUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(loginUser.fulfilled, (state) => {
+        state.loading = false;
+        state.error = null;
+      })
+      .addCase(loginUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      // Logout
+      .addCase(logoutUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(logoutUser.fulfilled, (state) => {
+        state.loading = false;
+        state.error = null;
+      })
+      .addCase(logoutUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
   },
 });
 
@@ -51,12 +86,6 @@ export const selectIsAuthenticated = (state) => state.auth.isAuthenticated;
 export const selectUser = (state) => state.auth.user;
 export const selectToken = (state) => state.auth.token;
 
-export const { login, logout, setUser, setError, clearError, setLoading } = authSlice.actions;
+export const { login, logout, setUser, clearError } = authSlice.actions;
 
 export default authSlice.reducer;
-
-try {
-  // Your code
-} catch (error) {
-  handleApiError(error);
-}

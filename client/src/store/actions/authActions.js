@@ -1,43 +1,44 @@
-import { login, logout, setError, setLoading, clearError } from '../slices/authSlice';
+import { createAsyncThunk } from '@reduxjs/toolkit';
+import { login, logout, clearError } from '../slices/authSlice';
 import { userApi } from '../../services/apiService';
 
-export const registerUser = (userData) => async (dispatch) => {
-  try {
-    dispatch(setLoading(true));
-    const response = await userApi.register(userData);
-    dispatch(login(response.data));
-    return true;
-  } catch (error) {
-    dispatch(setError(error.response?.data?.message || 'Registration failed'));
-    return false;
-  } finally {
-    dispatch(setLoading(false));
+export const registerUser = createAsyncThunk(
+  'auth/register',
+  async (userData, { dispatch, rejectWithValue }) => {
+    try {
+      const response = await userApi.register(userData);
+      dispatch(login(response.data));
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || 'Registration failed');
+    }
   }
-};
+);
 
-export const loginUser = (credentials) => async (dispatch) => {
-  try {
-    dispatch(setLoading(true));
-    const response = await userApi.login(credentials);
-    dispatch(login(response.data));
-    return true;
-  } catch (error) {
-    dispatch(setError(error.response?.data?.message || 'Login failed'));
-    return false;
-  } finally {
-    dispatch(setLoading(false));
+export const loginUser = createAsyncThunk(
+  'auth/login',
+  async (credentials, { dispatch, rejectWithValue }) => {
+    try {
+      const response = await userApi.login(credentials);
+      dispatch(login(response.data));
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || 'Login failed');
+    }
   }
-};
+);
 
-export const logoutUser = () => async (dispatch) => {
-  try {
-    await userApi.logout();
-    dispatch(logout());
-    return true;
-  } catch (error) {
-    dispatch(setError('Logout failed'));
-    return false;
+export const logoutUser = createAsyncThunk(
+  'auth/logout',
+  async (_, { dispatch, rejectWithValue }) => {
+    try {
+      await userApi.logout();
+      dispatch(logout());
+      return true;
+    } catch (error) {
+      return rejectWithValue('Logout failed');
+    }
   }
-};
+);
 
 export { clearError };
