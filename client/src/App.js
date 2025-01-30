@@ -1,38 +1,31 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { Provider } from 'react-redux';
-import { PersistGate } from 'redux-persist/integration/react';
+import { BrowserRouter } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
+import { ErrorBoundary } from 'react-error-boundary';
 import AppRoutes from './routes';
-import { store, persistor } from './store';
-import GlobalStyles from './styles/GlobalStyles';
+import ErrorFallback from './components/shared/ErrorFallback';
 import 'react-toastify/dist/ReactToastify.css';
-import Home from './pages/Home';
+import './styles/global.css';
 
 const App = () => {
   return (
-    <Provider store={store}>
-      <PersistGate loading={null} persistor={persistor}>
-        <Router>
-          <GlobalStyles />
-          <Routes>
-            <Route path="/" element={<Home />} />
-          </Routes>
-          <ToastContainer
-            position="top-right"
-            autoClose={3000}
-            hideProgressBar={false}
-            newestOnTop
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-            theme="light"
-          />
-        </Router>
-      </PersistGate>
-    </Provider>
+    <ErrorBoundary FallbackComponent={ErrorFallback}>
+      <BrowserRouter>
+        <AppRoutes />
+        <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+        />
+      </BrowserRouter>
+    </ErrorBoundary>
   );
 };
 

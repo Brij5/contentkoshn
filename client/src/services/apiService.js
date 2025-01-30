@@ -1,4 +1,5 @@
 import axios from 'axios';
+import api from '../utils/apiConfig';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5001/api';
 const axiosInstance = axios.create({
@@ -214,3 +215,41 @@ class ApiService {
 
 export const createApiService = (resourcePath) => new ApiService(resourcePath);
 export default ApiService;
+
+// User API calls
+export const userApi = {
+  login: (credentials) => api.post('/auth/login', credentials),
+  register: (userData) => api.post('/auth/register', userData),
+  logout: () => api.post('/auth/logout'),
+  getProfile: () => api.get('/users/profile'),
+  updateProfile: (data) => api.put('/users/profile', data),
+  changePassword: (data) => api.put('/users/password', data),
+  resetPassword: (email) => api.post('/auth/reset-password', { email }),
+  verifyResetToken: (token) => api.get(`/auth/reset-password/${token}`),
+  setNewPassword: (token, password) => api.post(`/auth/reset-password/${token}`, { password }),
+};
+
+// Blog API calls
+export const blogApi = {
+  getAllPosts: (page = 1, limit = 10) => api.get(`/posts?page=${page}&limit=${limit}`),
+  getPostById: (id) => api.get(`/posts/${id}`),
+  createPost: (postData) => api.post('/posts', postData),
+  updatePost: (id, postData) => api.put(`/posts/${id}`, postData),
+  deletePost: (id) => api.delete(`/posts/${id}`),
+  likePost: (id) => api.post(`/posts/${id}/like`),
+  unlikePost: (id) => api.delete(`/posts/${id}/like`),
+  getComments: (postId) => api.get(`/posts/${postId}/comments`),
+  addComment: (postId, content) => api.post(`/posts/${postId}/comments`, { content }),
+  deleteComment: (postId, commentId) => api.delete(`/posts/${postId}/comments/${commentId}`),
+  searchPosts: (query) => api.get(`/posts/search?q=${encodeURIComponent(query)}`),
+  getPostsByTag: (tag) => api.get(`/posts/tag/${encodeURIComponent(tag)}`),
+  getPopularTags: () => api.get('/posts/tags/popular'),
+};
+
+// Contact API calls
+export const contactApi = {
+  submitContactForm: (formData) => api.post('/contact', formData),
+  getContactSubmissions: () => api.get('/contact'),
+  updateSubmissionStatus: (id, status) => api.put(`/contact/${id}`, { status }),
+  deleteSubmission: (id) => api.delete(`/contact/${id}`),
+};

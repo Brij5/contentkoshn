@@ -5,12 +5,17 @@ module.exports = {
     node: true,
   },
   extends: ['react-app'],
+  parser: '@babel/eslint-parser',
   parserOptions: {
     ecmaFeatures: {
       jsx: true,
     },
     ecmaVersion: 'latest',
     sourceType: 'module',
+    requireConfigFile: false,
+    babelOptions: {
+      presets: ['@babel/preset-react']
+    }
   },
   settings: {
     react: {
