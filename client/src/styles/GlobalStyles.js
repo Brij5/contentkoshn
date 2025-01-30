@@ -1,7 +1,7 @@
 import { createGlobalStyle } from 'styled-components';
 
 const GlobalStyles = createGlobalStyle`
-  * {
+  *, *::before, *::after {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -23,8 +23,8 @@ const GlobalStyles = createGlobalStyle`
 
   h1, h2, h3, h4, h5, h6 {
     font-family: ${({ theme }) => theme.fonts.heading};
-    margin-bottom: 1rem;
     line-height: 1.2;
+    margin: 1em 0 0.5em;
   }
 
   p {
@@ -42,17 +42,8 @@ const GlobalStyles = createGlobalStyle`
   }
 
   button {
-    cursor: pointer;
-    border: none;
-    background: none;
-    font-family: inherit;
-    font-size: inherit;
+    font: inherit;
     color: inherit;
-    
-    &:disabled {
-      cursor: not-allowed;
-      opacity: 0.6;
-    }
   }
 
   img {
@@ -71,7 +62,7 @@ const GlobalStyles = createGlobalStyle`
 
   ::-webkit-scrollbar-thumb {
     background: ${({ theme }) => theme.colors.primary};
-    border-radius: 4px;
+    border-radius: ${({ theme }) => theme.radii.full};
   }
 
   /* Selection */
@@ -81,4 +72,4 @@ const GlobalStyles = createGlobalStyle`
   }
 `;
 
-export default GlobalStyles; 
+export default GlobalStyles;

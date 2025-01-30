@@ -43,7 +43,7 @@ const ServiceDescription = styled.p`
   color: ${({ theme }) => theme.colors.textSecondary};
 `;
 
-const initialServices = [
+const services = [
   {
     id: 1,
     title: 'Content Writing',
@@ -69,7 +69,7 @@ const ServicesSection = () => {
     <ServicesContainer>
       <Title>Our Services</Title>
       <ServicesGrid>
-        {initialServices.map((service) => (
+        {services.map((service) => (
           <ServiceCard
             key={service.id}
             whileHover={{ y: -5 }}

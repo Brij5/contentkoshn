@@ -1,21 +1,23 @@
 const express = require('express');
-const {
-  register,
-  login,
-  getMe,
-  forgotPassword,
-  resetPassword,
-  verifyEmail
-} = require('../controllers/authController');
-const { protect } = require('../middleware/auth');
-
 const router = express.Router();
+const { register, login } = require('../services/authService');
 
-router.post('/register', register);
-router.post('/login', login);
-router.get('/me', protect, getMe);
-router.post('/forgot-password', forgotPassword);
-router.put('/reset-password/:token', resetPassword);
-router.get('/verify-email/:token', verifyEmail);
+router.post('/register', async (req, res) => {
+  try {
+    const user = await register(req.body);
+    res.status(201).json(user);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+router.post('/login', async (req, res) => {
+  try {
+    const user = await login(req.body.email, req.body.password);
+    res.json(user);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
 
 module.exports = router;

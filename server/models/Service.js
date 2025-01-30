@@ -33,12 +33,12 @@ const subServiceSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 const serviceSchema = new mongoose.Schema({
-  title: {
+  name: {
     type: String,
-    required: [true, 'Title is required'],
+    required: [true, 'Name is required'],
     trim: true,
-    minlength: [3, 'Title must be at least 3 characters long'],
-    maxlength: [100, 'Title cannot exceed 100 characters']
+    minlength: [3, 'Name must be at least 3 characters long'],
+    maxlength: [100, 'Name cannot exceed 100 characters']
   },
   description: {
     type: String,

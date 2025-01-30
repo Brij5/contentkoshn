@@ -1,29 +1,23 @@
 import { configureStore } from '@reduxjs/toolkit';
-import { persistStore, persistReducer } from 'redux-persist';
-import storage from 'redux-persist/lib/storage';
-import contentReducer from './slices/contentSlice';
-import serviceReducer from './slices/serviceSlice';
+import themeReducer from './slices/themeSlice';
+import authReducer from './slices/authSlice';
+import { persistReducer, persistStore } from 'redux-persist';
+import storage from 'redux-persist/lib/storage'; // defaults to localStorage for web
 
 const persistConfig = {
   key: 'root',
   storage,
-  whitelist: ['content', 'service'],
 };
 
-const contentPersistedReducer = persistReducer(persistConfig, contentReducer);
-const servicePersistedReducer = persistReducer(persistConfig, serviceReducer);
+const persistedThemeReducer = persistReducer(persistConfig, themeReducer);
+const persistedAuthReducer = persistReducer(persistConfig, authReducer);
 
 export const store = configureStore({
   reducer: {
-    content: contentPersistedReducer,
-    service: servicePersistedReducer,
+    theme: persistedThemeReducer,
+    auth: persistedAuthReducer,
+    // other reducers...
   },
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware({
-      serializableCheck: {
-        ignoredActions: ['persist/PERSIST'],
-      },
-    }),
 });
 
 export const persistor = persistStore(store);

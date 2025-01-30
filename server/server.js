@@ -42,8 +42,8 @@ app.use(hpp());
 
 // Rate limiting
 const limiter = rateLimit({
-  windowMs: 10 * 60 * 1000, // 10 minutes
-  max: 100 // limit each IP to 100 requests per windowMs
+  windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 10 * 60 * 1000, // 10 minutes
+  max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) || 100 // limit each IP to 100 requests per windowMs
 });
 app.use('/api', limiter);
 
@@ -56,8 +56,8 @@ app.use('/api/comments', require('./routes/comments'));
 // Serve static assets in production
 if (process.env.NODE_ENV === 'production') {
   // Set static folder
-  app.use(express.static('client/build'));
-
+  app.use(express.static(path.join(__dirname, 'client/build')));
+  
   app.get('*', (req, res) => {
     res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
   });
@@ -80,7 +80,6 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/contentko
 .catch(err => console.error('MongoDB connection error:', err));
 
 const PORT = process.env.PORT || 5001;
-
 app.listen(PORT, () => {
   console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
-}); 
+});
